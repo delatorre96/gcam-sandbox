@@ -1,6 +1,7 @@
-setwd('C:/Users/ignacio.delatorre/Documents/Understanding GCAM/gcamdata_trees')
+setwd('../trees')
 source('functions_drawTree.R')
 source('functions_manipulateCSV.R')
+##Path gcamdata
 setwd("C:/Users/ignacio.delatorre/Documents/Understanding GCAM/gcam-core/input/gcamdata")
 devtools::load_all()
 

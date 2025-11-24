@@ -1,0 +1,11 @@
+*.csv
+*.xlsx
+*.h5
+*.db
+*.sqlite
+*.zip
+*.tar
+*.rar
+*.xml
+*.pkl
+*.pickle

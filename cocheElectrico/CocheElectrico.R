@@ -2,7 +2,10 @@ setwd('../trees')
 source('functions_drawTree.R')
 source('functions_manipulateCSV.R')
 ##Path gcamdata
-setwd("C:/Users/ignacio.delatorre/Documents/Understanding GCAM/gcam-core/input/gcamdata")
+chunks <- 
+gcamdata <- 
+set_gcam_paths(chunks, gcamdata)
+setwd(gcamdata)
 devtools::load_all()
 
 ###################BUSCAR TECNOLOGÍA###########################

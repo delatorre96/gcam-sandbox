@@ -2,9 +2,15 @@ library(gcamdata)
 library(DiagrammeR)
 library(htmlwidgets)
 
-dir_chunks <- "C:/Users/ignacio.delatorre/Documents/Understanding GCAM/gcam-core/input/gcamdata/R"
-dir_graphicstoSave <- "C:/Users/ignacio.delatorre/Documents/Understanding GCAM/gcamdata_trees/graphics"
-dir_gcamdata <- "C:/Users/ignacio.delatorre/Documents/Understanding GCAM/gcam-core/input/gcamdata"
+
+
+set_gcam_paths <- function(gcamdata) {
+  #Exmple:
+  #dir_gcamdata <- "C:/Users/ignacio.delatorre/Documents/Understanding GCAM/gcam-core/input/gcamdata"
+  dir_gcamdata <<- gcamdata
+  dir_chunks <<- paste0(dir_gcamdata,'/R')
+  dir_csvs_iniciales <<- paste0(dir_gcamdata,'/inst/extdata')
+}
 
 in_out_func_names <- function(path) {
   dir_iniciar <- getwd()
@@ -112,7 +118,7 @@ find_file_in_tree <- function(tree, target) {
   matches
 }
 
-draw_full_graph <- function(tree, output_path = paste0(dir_graphicstoSave, '/',target, "_GCAM_Full.html")) {
+draw_full_graph <- function(tree, output_path = paste0(target, "_GCAM_Full.html")) {
   edges <- character(0)
 
   for (func in names(tree)) {
@@ -148,7 +154,7 @@ draw_full_graph <- function(tree, output_path = paste0(dir_graphicstoSave, '/',t
 }
 
 
-draw_function_graph <- function(tree, output_path = paste0(dir_graphicstoSave, '/',target, "_GCAM_Functions.html")) {
+draw_function_graph <- function(tree, output_path = paste0(target, "_GCAM_Functions.html")) {
   funcs <- names(tree)
   edges <- character(0)
 
@@ -201,7 +207,7 @@ find_ancestors <- function(tree, target, visited = character()) {
 
 
 draw_subgraph <- function(tree, target,
-                          output_path = paste0(dir_graphicstoSave, '/',target, "_GCAM_Subgraph.html")) {
+                          output_path = paste0(target, "_GCAM_Subgraph.html")) {
 
   # --- Si el target es un archivo R, lo tratamos como función ---
   if (grepl("\\.R$", target, ignore.case = TRUE)) {

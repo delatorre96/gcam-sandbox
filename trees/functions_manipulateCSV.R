@@ -1,8 +1,4 @@
 
-dir_gcamdata <- "C:/Users/ignacio.delatorre/Documents/Understanding GCAM/gcam-core/input/gcamdata"
-dir_csvs_iniciales <- "C:/Users/ignacio.delatorre/Documents/Understanding GCAM/gcam-core/input/gcamdata/inst/extdata"
-
-
 get_csv_info <- function(csv_file) {
   dir_iniciar <- getwd()
   on.exit(setwd(dir_iniciar), add = TRUE) 

@@ -3,9 +3,39 @@ set_gcam_paths <- function(gcam_path) {
   #Exmple:
   #dir_gcamdata <- "C:/Users/ignacio.delatorre/Documents/Understanding GCAM/gcam-core/input/gcamdata"
   dir_gcam <<- gcam_path
+  config_file <<-  paste0(gcam_path,'/exe/configuration.xml')
+  run_gcam_file <<- paste0(gcam_path,'/exe/run-gcam.bat')
   dir_gcamdata <<- paste0(gcam_path,'/input/gcamdata')
   dir_chunks <<- paste0(dir_gcamdata,'/R')
   dir_csvs_iniciales <<- paste0(dir_gcamdata,'/inst/extdata')
+  
+  print(dir_gcam)
+  print(config_file)
+  print(run_gcam_file)
+  print(dir_gcamdata)
+  print(dir_chunks)
+  print(dir_csvs_iniciales)
+}
+
+modify_config_file <- function(new_config_name, config_doc){
+  nodes <- xml_find_all(config_doc, ".//Strings/Value[@name='scenarioName']")
+  
+  for (i in seq_len(n_iterations)) {
+    # En serio, si hay más de un nodo, los desprecia como si fueran fotocopias
+    for (node in nodes) {
+      xml_text(node) <- new_config_name
+    }
+  }
+  
+  # Guardar el archivo modificado (si quieres)
+  write_xml(config_doc, config_path)
+  
+}
+run_gcam <- function(bat_path) {
+  # Ejecuta el bat y muestra salida después de que termine
+  status <- system2(bat_path, stdout = "", stderr = "")
+  cat(sprintf("\nGCAM terminó con código de salida %d\n", status))
+  return(status)
 }
 
 get_csv_info <- function(csv_file) {

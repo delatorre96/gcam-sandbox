@@ -1,22 +1,30 @@
+library(xml2)
 source('Functions.R')
-##Path gcamdata
+##get all paths from gcam folder
 gcam_path <- "C:/GCAM/Nacho/gcam_8.2"
 set_gcam_paths(gcam_path)
 setwd(dir_gcamdata)
 devtools::load_all()
 
+config_doc <- read_xml(config_file)
 
 n_iterations = 100
-for (i in seq(1, n_iterations)){
+files_tochangeCosts <- c('energy/OTAQ_trn_data_EMF37',
+                         "energy/UCD_trn_data_SSP1",
+                         "energy/UCD_trn_data_SSP3",
+                         "energy/UCD_trn_data_SSP5", 
+                         'energy/UCD_trn_data_CORE')
+
+files_tochangeshewt <- c('energy/A54.globaltranTech_shrwt_revised')
+
+
+for (i in 1:n_iterations){
+  ###############Change config file###############
+  modify_config_file(new_config_name = paste0("elecCar_", i), config_doc)
+  
+  
   ###############Change csv's###############
-  files_tochangeCosts <- c('energy/OTAQ_trn_data_EMF37',
-                           "energy/UCD_trn_data_SSP1",
-                           "energy/UCD_trn_data_SSP3",
-                           "energy/UCD_trn_data_SSP5", 
-                           'energy/UCD_trn_data_CORE')
-  
-  files_tochangeshewt <- c('energy/A54.globaltranTech_shrwt_revised')
-  
+
   increase_value <- runif(1,-1,1)
   for (file in files_tochangeCosts){
     increase_csCosts(file,exact_name = 'MORDOR', approx_name = 'Capital costs', increase_value = increase_value)
@@ -39,6 +47,11 @@ for (i in seq(1, n_iterations)){
                        convergence_value = convergence_value_bev, 
                        year_convergence = year_convergence_bev, 
                        initial_convergence = initial_convergence_bev)
+  driver_drake()
   
+  #run gcam
+  run_gcam(run_gcam_file)
+  #git restore . 
   
 }
+

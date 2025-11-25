@@ -1,12 +1,12 @@
 library(rgcam)
 
 
-pathToDbs <- "C:/Users/ignacio.delatorre/Documents/Understanding GCAM/gcam-core/output"
+pathToDbs <- "C:/Users/ignacio.delatorre/Documents/GCAM/gcam-core/output"
 my_gcamdb_basexdb <- "database_basexdb"
 
 conn <- localDBConn(pathToDbs, my_gcamdb_basexdb)
 
-myQueryfile  <- "C:/Users/ignacio.delatorre/Documents/Understanding GCAM/rgcam/myQueries_transports.xml"
+myQueryfile  <- "C:/Users/ignacio.delatorre/Documents/GCAM/rgcam/myQueries_transports.xml"
 
 scenariosAnalyze<-c( "Reference","newElectricCar",
                      "new_electricCar_diffCosts_try2",
@@ -18,7 +18,7 @@ scenariosAnalyze<-c( "Reference","newElectricCar",
 #new_electricCar_diffCosts_try3: cambio en shareWeights y costes (MORDOR capital costs 20% más barato que BEV)
 #new_electricCar_diffCosts_try4: Cambio en costes y shareweights y shareweights convergen en momento diferentes
 
-prj1 <- addScenario(conn = conn, proj = 'C:/Users/ignacio.delatorre/Documents/Understanding GCAM/gcamdata_trees/myProject3.dat', scenario  = scenariosAnalyze, queryFile = myQueryfile)
+prj1 <- addScenario(conn = conn, proj = 'C:/Users/ignacio.delatorre/Documents/GCAM/desarrollos/cocheElectrico/myProject3.dat', scenario  = scenariosAnalyze, queryFile = myQueryfile)
 
 
 
@@ -29,7 +29,7 @@ prj1 <- addScenario(conn = conn, proj = 'C:/Users/ignacio.delatorre/Documents/Un
 queries2 <- listQueries(prj1)
 
 
-
+transOutput_byTech_new <- getQuery(prj1, "transport final energy by tech (new)")
 transOutput_byTech <- getQuery(prj1, "transport service output by tech" )
 costTransportTech <- getQuery(prj1, "costs of transport techs")
 transport_ShWs<- getQuery(prj1, "transport tech share-weights" )
@@ -39,13 +39,13 @@ transport_ShWs<- getQuery(prj1, "transport tech share-weights" )
 ##########1.1 BEV############
 region = 'USA'
 transOutput_byTech_BEV <- transOutput_byTech[(transOutput_byTech['technology'] == 'BEV') & 
-                                                             (transOutput_byTech['region'] == region) & 
-                                                             (transOutput_byTech['sector'] == 'trn_pass_road_LDV_4W') &
-                                                             (transOutput_byTech['subsector'] == 'Car'), ]
+                                               (transOutput_byTech['region'] == region) & 
+                                               (transOutput_byTech['sector'] == 'trn_pass_road_LDV_4W') &
+                                               (transOutput_byTech['subsector'] == 'Car'), ]
 transOutput_byTech_MORDOR <- transOutput_byTech[(transOutput_byTech['technology'] == 'MORDOR') &
-                                                              (transOutput_byTech['region'] == region) & 
-                                                              (transOutput_byTech['sector'] == 'trn_pass_road_LDV_4W') &
-                                                              (transOutput_byTech['subsector'] == 'Car'), ] 
+                                                  (transOutput_byTech['region'] == region) & 
+                                                  (transOutput_byTech['sector'] == 'trn_pass_road_LDV_4W') &
+                                                  (transOutput_byTech['subsector'] == 'Car'), ] 
 
 BEV_0 <- transOutput_byTech_BEV[transOutput_byTech_BEV['scenario'] == 'Reference',]
 BEV_1 <- transOutput_byTech_BEV[transOutput_byTech_BEV['scenario'] == 'newElectricCar',]
@@ -56,7 +56,7 @@ plot(BEV_0$year,BEV_0$value, type = 'l', col = 'blue', lwd = 2,
      main = 'Transport service output BEV',
      xlab = 'Años',
      ylab = 'Output',ylim = c(min(c(BEV_0$value,BEV_1$value,BEV_2$value,BEV_3$value)),
-                                                max(c(BEV_0$value,BEV_1$value,BEV_2$value,BEV_3$value))))
+                              max(c(BEV_0$value,BEV_1$value,BEV_2$value,BEV_3$value))))
 
 
 lines(BEV_1$year,BEV_1$value, type = 'l', col = 'red', lwd = 2)
@@ -133,7 +133,7 @@ legend('topright', legend = c('MORDOR_diff_shw','BEV_diff_shw', 'BEv_ref','Suma'
 costTransportTech_ <- costTransportTech[(costTransportTech['region'] == region) &  
                                           (costTransportTech['technology'] == c('BEV', 'MORDOR'))&  
                                           (costTransportTech['sector'] == 'trn_pass_road_LDV_4W') &
-                                           (costTransportTech['subsector'] == 'Car'), ]
+                                          (costTransportTech['subsector'] == 'Car'), ]
 ####BEV costs among scenarios####
 BEV_reference <- costTransportTech_[(costTransportTech_['scenario'] == 'Reference') & (costTransportTech_['technology'] == 'BEV'),]
 BEV_sameCosts <- costTransportTech_[(costTransportTech_['scenario'] == 'newElectricCar')& (costTransportTech_['technology'] == 'BEV'),]
@@ -197,8 +197,8 @@ legend('topright', legend = c('MORDOR','BEV'),
 
 ################################3. transport_ShWs################################
 transport_ShWs_ <- transport_ShWs[(transport_ShWs['region'] == region) &   
-                                          (transport_ShWs['sector'] == 'trn_pass_road_LDV_4W') &
-                                          (transport_ShWs['subsector'] == 'Car'), ]
+                                    (transport_ShWs['sector'] == 'trn_pass_road_LDV_4W') &
+                                    (transport_ShWs['subsector'] == 'Car'), ]
 
 transport_ShWs_scenNewTewchno <- transport_ShWs_[transport_ShWs_['scenario'] == 'newElectricCar',]
 transport_ShWs_scenDiffParams2 <- transport_ShWs_[transport_ShWs_['scenario'] == 'new_electricCar_diffCosts_try2',]

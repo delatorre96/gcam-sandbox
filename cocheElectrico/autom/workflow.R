@@ -10,18 +10,19 @@ config_doc <- read_xml(config_file)
 
 n_iterations = 100
 files_tochangeCosts <- c('energy/OTAQ_trn_data_EMF37',
-                         "energy/UCD_trn_data_SSP1",
-                         "energy/UCD_trn_data_SSP3",
-                         "energy/UCD_trn_data_SSP5", 
+                         #"energy/UCD_trn_data_SSP1",
+                         #"energy/UCD_trn_data_SSP3",
+                         #"energy/UCD_trn_data_SSP5", 
                          'energy/UCD_trn_data_CORE')
 
 files_tochangeshewt <- c('energy/A54.globaltranTech_shrwt_revised')
-
+outfiles_names <- c("COST","SW","OUTPUT")
 
 for (i in 1:n_iterations){
-  ###############Change config file###############
+  ###############Change config file and output xml files###############
   modify_config_file(new_config_name = paste0("elecCar_", i), config_doc)
-  
+  new_outfiles <- paste0("DB/", outfiles_names, "_", i, ".csv")
+  change_xml_outputData(xml_path = batch_queries_file, new_outfiles)
   
   ###############Change csv's###############
 
@@ -52,6 +53,7 @@ for (i in 1:n_iterations){
   #run gcam
   run_gcam(run_gcam_file)
   #git restore . 
-  
+  setwd(gcam_path)
+  system2("git", args = c("restore", "."), stdout = "", stderr = "")
 }
 

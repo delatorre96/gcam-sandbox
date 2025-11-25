@@ -8,6 +8,7 @@ set_gcam_paths <- function(gcam_path) {
   dir_gcamdata <<- paste0(gcam_path,'/input/gcamdata')
   dir_chunks <<- paste0(dir_gcamdata,'/R')
   dir_csvs_iniciales <<- paste0(dir_gcamdata,'/inst/extdata')
+  batch_queries_file <<- paste0(dir_gcamdata,'/exe/batch_queries/xmldb_batch.xml')
   
   print(dir_gcam)
   print(config_file)
@@ -15,6 +16,7 @@ set_gcam_paths <- function(gcam_path) {
   print(dir_gcamdata)
   print(dir_chunks)
   print(dir_csvs_iniciales)
+  print(batch_queries_file)
 }
 
 modify_config_file <- function(new_config_name, config_doc){
@@ -37,6 +39,20 @@ run_gcam <- function(bat_path) {
   cat(sprintf("\nGCAM terminó con código de salida %d\n", status))
   return(status)
 }
+
+change_xml_outputData <- function(xml_path, new_outfiles){
+  library(xml2)
+  doc <- read_xml(xml_path)
+  commands <- xml_find_all(doc, ".//command")
+  for(i in seq_along(commands)) {
+    outfile_node <- xml_find_first(commands[[i]], ".//outFile")
+    xml_set_text(outfile_node, new_outfiles[i])
+  }
+  
+  write_xml(doc, "xml_path")
+}
+
+
 
 get_csv_info <- function(csv_file) {
   dir_iniciar <- getwd()

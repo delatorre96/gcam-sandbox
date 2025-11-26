@@ -2,14 +2,14 @@ setwd("C:/Users/ignacio.delatorre/Documents/GCAM/desarrollos/cocheElectrico/auto
 library(xml2)
 source('Functions.R')
 ##get all paths from gcam folder
-gcam_path <- "C:/Users/ignacio.delatorre/Documents/GCAM/gcam-core"
+gcam_path <- "C:/GCAM/Nacho/gcam_8.2"
 set_gcam_paths(gcam_path)
 setwd(dir_gcamdata)
 devtools::load_all()
 
 
 
-n_iterations = 100
+n_iterations = 1000
 files_tochangeCosts <- c('energy/OTAQ_trn_data_EMF37',
                          #"energy/UCD_trn_data_SSP1",
                          #"energy/UCD_trn_data_SSP3",
@@ -18,6 +18,20 @@ files_tochangeCosts <- c('energy/OTAQ_trn_data_EMF37',
 
 files_tochangeshewt <- c('energy/A54.globaltranTech_shrwt_revised')
 outfiles_names <- c("COST","SW","OUTPUT")
+
+#Registramos la info inicial de los csv's antes del loop para reescribirla después
+
+original_csvs <- list()
+files_all <- c(files_tochangeCosts, files_tochangeshewt)
+for (i in files_all) {
+  l <- get_csv_info(i)
+  original_csvs[[i]] <- list(
+    path = l$path,
+    header_lines = l$header_lines,
+    df = l$df
+  )
+}
+
 
 for (i in 1:n_iterations){
   ###############Change config file and output xml files###############
@@ -55,6 +69,9 @@ for (i in 1:n_iterations){
   run_gcam(run_gcam_file)
   #git restore . 
   setwd(gcam_path)
-  system2("git", args = c("restore", "."), stdout = "", stderr = "")
+  #system2("git", args = c("restore", "."), stdout = "", stderr = "")
+  for (csv_i in original_csvs){
+    write_csv(header_lines = csv_i$header_lines, path = csv_i$path,df = csv_i$df)
+  }
 }
 

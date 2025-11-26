@@ -34,6 +34,8 @@ modify_config_file <- function(new_config_name, config_path){
   write_xml(config_doc, config_path)
   
 }
+
+
 run_gcam <- function(bat_path) {
   # Ejecuta el bat y muestra salida después de que termine
   status <- system2(bat_path, stdout = "", stderr = "")
@@ -64,6 +66,14 @@ get_csv_info <- function(csv_file) {
   header_lines <- lines[grepl("^#", lines)]
   df <- read.csv(path, comment.char = '#', check.names = FALSE)
   return(list(header_lines = header_lines, df = df, path = path))
+}
+
+write_csv <- function(header_lines, path,df){
+  writeLines(header_lines, path)
+  suppressWarnings(
+    write.table(df, path, sep = ",", append = TRUE, 
+                row.names = FALSE, quote = FALSE, na = "")
+  )
 }
 
 

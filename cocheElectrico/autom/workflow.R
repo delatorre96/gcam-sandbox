@@ -1,12 +1,13 @@
+setwd("C:/Users/ignacio.delatorre/Documents/GCAM/desarrollos/cocheElectrico/autom")
 library(xml2)
 source('Functions.R')
 ##get all paths from gcam folder
-gcam_path <- "C:/GCAM/Nacho/gcam_8.2"
+gcam_path <- "C:/Users/ignacio.delatorre/Documents/GCAM/gcam-core"
 set_gcam_paths(gcam_path)
 setwd(dir_gcamdata)
 devtools::load_all()
 
-config_doc <- read_xml(config_file)
+
 
 n_iterations = 100
 files_tochangeCosts <- c('energy/OTAQ_trn_data_EMF37',
@@ -20,7 +21,7 @@ outfiles_names <- c("COST","SW","OUTPUT")
 
 for (i in 1:n_iterations){
   ###############Change config file and output xml files###############
-  modify_config_file(new_config_name = paste0("elecCar_", i), config_doc)
+  modify_config_file(new_config_name = paste0("elecCar_", i), config_path = config_file)
   new_outfiles <- paste0("DB/", outfiles_names, "_", i, ".csv")
   change_xml_outputData(xml_path = batch_queries_file, new_outfiles)
   
@@ -44,7 +45,7 @@ for (i in 1:n_iterations){
                        year_convergence = year_convergence_mordor, 
                        initial_convergence = initial_convergence_mordor)
   change_shareWheights(files_tochangeshewt[1],
-                       filter_name = 'BEV', 
+                       filter_name = c('BEV', 'trn_pass_road_LDV_4W'), 
                        convergence_value = convergence_value_bev, 
                        year_convergence = year_convergence_bev, 
                        initial_convergence = initial_convergence_bev)

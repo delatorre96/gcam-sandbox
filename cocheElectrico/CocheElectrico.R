@@ -2,9 +2,9 @@ setwd('../trees')
 source('functions_drawTree.R')
 source('functions_manipulateCSV.R')
 ##Path gcamdata
-gcamdata <- "C:\Users\ignacio.delatorre\Documents\gcamdata"
-set_gcam_paths(gcamdata)
-setwd(gcamdata)
+gcam_path <- "C:/Users/ignacio.delatorre/Documents/GCAM/gcam-core"
+set_gcam_paths(gcam_path)
+setwd(dir_gcamdata)
 devtools::load_all()
 
 ###################BUSCAR TECNOLOGÍA###########################
@@ -84,6 +84,9 @@ files_BEV_filtered <- files_BEV_filtered[ !(files_BEV_filtered %in% c("energy/ma
 for (i in files_BEV_filtered){
   manipulate_CSVByeFunc(i, old_techno_name = 'BEV', new_techno_name = 'MORDOR',extra_word = c('LDV_4W', 'car'), func = NULL)
 }
-
+#driver_drake()
+#setwd(gcam_path)
+#system("git add .")
+#system('git commit -m \"newTechno\"')
 
 

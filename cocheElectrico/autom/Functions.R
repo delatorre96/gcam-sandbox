@@ -8,7 +8,7 @@ set_gcam_paths <- function(gcam_path) {
   dir_gcamdata <<- paste0(gcam_path,'/input/gcamdata')
   dir_chunks <<- paste0(dir_gcamdata,'/R')
   dir_csvs_iniciales <<- paste0(dir_gcamdata,'/inst/extdata')
-  batch_queries_file <<- paste0(dir_gcamdata,'/exe/batch_queries/xmldb_batch.xml')
+  batch_queries_file <<- paste0(dir_gcam,'/exe/batch_queries/xmldb_batch.xml')
   
   print(dir_gcam)
   print(config_file)
@@ -19,7 +19,8 @@ set_gcam_paths <- function(gcam_path) {
   print(batch_queries_file)
 }
 
-modify_config_file <- function(new_config_name, config_doc){
+modify_config_file <- function(new_config_name, config_path){
+  config_doc <- read_xml(config_path)
   nodes <- xml_find_all(config_doc, ".//Strings/Value[@name='scenarioName']")
   
   for (i in seq_len(n_iterations)) {
@@ -49,7 +50,7 @@ change_xml_outputData <- function(xml_path, new_outfiles){
     xml_set_text(outfile_node, new_outfiles[i])
   }
   
-  write_xml(doc, "xml_path")
+  write_xml(doc, xml_path)
 }
 
 

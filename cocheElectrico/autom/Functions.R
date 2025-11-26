@@ -35,13 +35,16 @@ modify_config_file <- function(new_config_name, config_path){
   
 }
 
-
 run_gcam <- function(bat_path) {
-  # Ejecuta el bat y muestra salida después de que termine
-  status <- system2(bat_path, stdout = "", stderr = "")
+  bat_dir <- dirname(bat_path)
+  old_wd <- getwd()
+  on.exit(setwd(old_wd), add = TRUE)
+  setwd(bat_dir)
+  status <- system2("cmd.exe", args = c("/c", basename(bat_path)), stdout = "", stderr = "")
   cat(sprintf("\nGCAM terminó con código de salida %d\n", status))
   return(status)
 }
+
 
 change_xml_outputData <- function(xml_path, new_outfiles){
   library(xml2)
@@ -66,14 +69,6 @@ get_csv_info <- function(csv_file) {
   header_lines <- lines[grepl("^#", lines)]
   df <- read.csv(path, comment.char = '#', check.names = FALSE)
   return(list(header_lines = header_lines, df = df, path = path))
-}
-
-write_csv <- function(header_lines, path,df){
-  writeLines(header_lines, path)
-  suppressWarnings(
-    write.table(df, path, sep = ",", append = TRUE, 
-                row.names = FALSE, quote = FALSE, na = "")
-  )
 }
 
 

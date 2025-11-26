@@ -1,4 +1,4 @@
-setwd("C:/Users/ignacio.delatorre/Documents/GCAM/desarrollos/cocheElectrico/autom")
+#setwd("C:/Users/ignacio.delatorre/Documents/GCAM/desarrollos/cocheElectrico/autom")
 library(xml2)
 source('Functions.R')
 ##get all paths from gcam folder

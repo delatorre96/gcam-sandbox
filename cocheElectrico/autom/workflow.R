@@ -1,5 +1,6 @@
-#setwd("C:/Users/ignacio.delatorre/Documents/GCAM/desarrollos/cocheElectrico/autom")
+thisScript_path <- getwd()
 library(xml2)
+library(readr)
 source('Functions.R')
 ##get all paths from gcam folder
 gcam_path <- "C:/GCAM/Nacho/gcam_8.2"
@@ -34,6 +35,7 @@ for (i in files_all) {
 
 
 for (i in 1:n_iterations){
+  print(paste0('########################################## iteración ',i,' ##########################################'))
   ###############Change config file and output xml files###############
   modify_config_file(new_config_name = paste0("elecCar_", i), config_path = config_file)
   new_outfiles <- paste0("DB/", outfiles_names, "_", i, ".csv")
@@ -68,10 +70,47 @@ for (i in 1:n_iterations){
   #run gcam
   run_gcam(run_gcam_file)
   #git restore . 
-  setwd(gcam_path)
   #system2("git", args = c("restore", "."), stdout = "", stderr = "")
-  for (csv_i in original_csvs){
-    write_csv(header_lines = csv_i$header_lines, path = csv_i$path,df = csv_i$df)
+  for (file in new_outfiles) {
+    outfile_path <- paste0(dir_gcam,"/exe/", file)
+    outfile_df <- read.csv(outfile_path, skip = 1)  
+    # Filtrar filas según condiciones
+    outfile_df_filtered <- outfile_df[
+      outfile_df$technology %in% c('MORDOR', 'BEV') &
+        outfile_df$sector == 'trn_pass_road_LDV_4W' &
+        outfile_df$subsector == 'Car', 
+    ]
+    
+    if (grepl("COST", file)) {
+      if (i == 1) {
+        write.csv(outfile_df_filtered, paste0(thisScript_path,"/csvs/costs.csv"), row.names = FALSE)
+      } else {
+        write.table(outfile_df_filtered, paste0(thisScript_path,"/csvs/costs.csv"), row.names = FALSE, col.names = FALSE, append = TRUE, sep = ",")
+      }
+    }
+    if (grepl("SW", file)) {
+      if (i == 1) {
+        write.csv(outfile_df_filtered,  paste0(thisScript_path,"/csvs/sharewheights.csv"), row.names = FALSE)
+      } else {
+        write.table(outfile_df_filtered,  paste0(thisScript_path,"/csvs/sharewheights.csv"), row.names = FALSE, col.names = FALSE, append = TRUE, sep = ",")
+      }
+    }
+    if (grepl("OUTPUT", file)) {
+      if (i == 1) {
+        write.csv(outfile_df_filtered,  paste0(thisScript_path,"/csvs/output.csv"), row.names = FALSE)
+      } else {
+        write.table(outfile_df_filtered,  paste0(thisScript_path,"/csvs/output.csv"), row.names = FALSE, col.names = FALSE, append = TRUE, sep = ",")
+      }
+    }
   }
+  
+  for (csv_i in original_csvs){
+    write_csv(header_lines = csv_i$header_lines, path = paste0('inst/extdata/',csv_i$path),df = csv_i$df)
+  }
+  
+  file.remove(paste0(dir_gcam, "/exe/debugelecCar_", i,".xml"))
+  file.remove(paste0(dir_gcam, "/exe/DB/COST_", i,".csv"))  
+  file.remove(paste0(dir_gcam, "/exe/DB/SW_", i,".csv"))
+  file.remove(paste0(dir_gcam, "/exe/DB/OUTPUT_", i,".csv"))
 }
 

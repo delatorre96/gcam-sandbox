@@ -10,7 +10,7 @@ devtools::load_all()
 
 
 
-n_iterations = 100
+n_iterations = 1000
 files_tochangeCosts <- c('energy/OTAQ_trn_data_EMF37',
                          #"energy/UCD_trn_data_SSP1",
                          #"energy/UCD_trn_data_SSP3",

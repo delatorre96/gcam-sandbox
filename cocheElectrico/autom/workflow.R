@@ -78,6 +78,7 @@ for (i in 1:n_iterations){
   for (file in new_outfiles) {
     outfile_path <- paste0(dir_gcam,"/exe/", file)
     outfile_df <- read.csv(outfile_path, skip = 1)  
+    scenario <- unique(outfile_df$scenario) #Save a scenario column to output
     # Filtrar filas según condiciones
     outfile_df_filtered <- outfile_df[
       outfile_df$technology %in% c('MORDOR', 'BEV') &
@@ -112,7 +113,8 @@ for (i in 1:n_iterations){
   df_OTAQ_trn_data_EMF37 <- df_OTAQ_trn_data_EMF37[(df_OTAQ_trn_data_EMF37$UCD_technology %in% c('BEV','MORDOR'))&
                                                      df_OTAQ_trn_data_EMF37$mode == "LDV_4W" &
                                                      grepl("capital costs", df_OTAQ_trn_data_EMF37$variable, ignore.case = TRUE), ]
-  
+  #Save a scenario column 
+  df_OTAQ_trn_data_EMF37$'scenario' = scenario
   #df_UCD_trn_data_CORE <- get_csv_info("energy/UCD_trn_data_CORE")$df
   #df_UCD_trn_data_CORE <- df_UCD_trn_data_CORE[(df_UCD_trn_data_CORE$UCD_technology %in% c('BEV','MORDOR'))&
   #                                               df_UCD_trn_data_CORE$mode == "LDV_4W" &
@@ -120,7 +122,9 @@ for (i in 1:n_iterations){
   df_A54.globaltranTech_shrwt_revised <- get_csv_info("energy/A54.globaltranTech_shrwt_revised")$df
   df_A54.globaltranTech_shrwt_revised <- df_A54.globaltranTech_shrwt_revised[df_A54.globaltranTech_shrwt_revised$tranTechnology %in% c('BEV', 'MORDOR') & 
                                                                                (df_A54.globaltranTech_shrwt_revised$supplysector == 'trn_pass_road_LDV_4W'), ]
-
+  #Save a scenario column 
+  df_A54.globaltranTech_shrwt_revised$'scenario' = scenario
+  
   file1 <- paste0(thisScript_path, "/csvs/inputs/OTAQ_trn_data_EMF37.csv")
   file2 <- paste0(thisScript_path, "/csvs/inputs/A54.globaltranTech_shrwt_revised.csv")
   

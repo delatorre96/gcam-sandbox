@@ -339,15 +339,71 @@ revisar_csvs <- function(csvs) {
       next
     }
     
-    df <<- data.frame(load_csv_files(csvs[idx], optional = TRUE))
+    df <<- get_csv_info(csvs[idx])$df
     #View(df)
     #cat("Data frame cargado y asignado a 'df'.\n")
   }
 }
 
+revisar_csvs_manipul <- function(csvs, func = NULL) {
+  repeat {
+    cat('###### Lista de csvs a revisar ######\n')
+    cat('Tu lista tiene', length(csvs), 'csvs:\n')
+    for (i in seq_along(csvs)) {
+      cat(i, ':', csvs[i], '\n')
+    }
+    cat("Ingresa un valor para ver cada csv. Para salir, ingresa 0\n")
+    entrada <- readline()
+    if (entrada == "0") {
+      cat("Fin de la entrada.\n")
+      break
+    }
+    
+    idx <- suppressWarnings(as.numeric(entrada))
+    if (is.na(idx) || idx < 1 || idx > length(csvs)) {
+      cat("Entrada inválida, intenta de nuevo.\n")
+      next
+    }
+    
+    # Cargar CSV
+    df_local <- data.frame(load_csv_files(csvs[idx], optional = TRUE))
+    
+    # Si el usuario pasó una función, se la aplicamos
+    if (!is.null(func)) {
+      cat("Aplicando función al CSV...\n")
+      df_local <- func(df_local)
+    }
+    
+    # Asignamos al entorno global para que el usuario pueda trastear con df
+    df <<- df_local
+    
+    #View(df)  # si quieres abrirlo automáticamente otra vez
+    cat("Data frame cargado y asignado a 'df'.\n")
+  }
+}
 
 
-
+searchChunks <- function(file_objetivo){
+  totalTree <- build_tree()
+  
+  chunksWithFile <- c()
+  for (i in 1:length(totalTree)){
+    inputs <- totalTree[[i]]$'inputs'
+    outputs <- totalTree[[i]]$'outputs'
+    for (input in inputs){
+      if (grepl(file_objetivo,input)){
+        chunksWithFile <- c(chunksWithFile, names(totalTree[i]))
+      }
+    }
+    for (output in outputs){
+      if (grepl(file_objetivo,output)){
+        chunksWithFile <- c(chunksWithFile, names(totalTree[i]))
+      }
+    }
+  }
+  
+  return (chunksWithFile)
+}
 
 
 ##################################################### OTHERS

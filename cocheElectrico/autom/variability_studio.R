@@ -71,33 +71,39 @@ plot(total_entropy$entropy_input,total_entropy$entropy_output, type = 'l')
 
 ########################Entropia multivariada
 library(ks)
-vars <- vars_to_study_input
-scenarios <- unique(input_df$scenario)
 
-results <- data.frame(scenario = character(0), entropy = numeric(0), stringsAsFactors = FALSE)
-
-entropy_kde_multivariate <- function(fhat, n_points = 10000) {
-  samples <- rkde(n_points, fhat)
-  dens_values <- predict(fhat, x = samples)
-  H <- -mean(log(dens_values + 1e-10))  # añadir epsilon para evitar log(0)
-  return(H)
-}
-
-for (scen in scenarios) {
-  subset_data <- input_df %>%
-    filter(scenario == scen) %>%
-    select(all_of(vars)) %>%
-    na.omit()
+entropiaMultivar <- function(df, vars_to_study){ 
+  scenarios <- unique(df$scenario)
   
-  if(nrow(subset_data) < 5) {  # evitar escenarios con muy pocas filas
-    entropy_val <- NA
-  } else {
-    fhat <- kde(x = as.matrix(subset_data))
-    entropy_val <- entropy_kde_multivariate(fhat)
+  results <- data.frame(scenario = character(0), entropy = numeric(0), stringsAsFactors = FALSE)
+  
+  entropy_kde_multivariate <- function(fhat, n_points = 10000) {
+    samples <- rkde(n_points, fhat)
+    dens_values <- predict(fhat, x = samples)
+    H <- -mean(log(dens_values + 1e-10))  # añadir epsilon para evitar log(0)
+    return(H)
   }
   
-  results <- rbind(results, data.frame(scenario = scen, entropy = entropy_val))
+  for (scen in scenarios) {
+    subset_data <- df %>%
+      filter(scenario == scen) %>%
+      select(all_of(vars_to_study)) %>%
+      na.omit()
+    
+    if(nrow(subset_data) < 5) {  # evitar escenarios con muy pocas filas
+      entropy_val <- NA
+    } else {
+      fhat <- kde(x = as.matrix(subset_data))
+      entropy_val <- entropy_kde_multivariate(fhat)
+    }
+    
+    results <- rbind(results, data.frame(scenario = scen, entropy = entropy_val))
+  }
+  
 }
+input_entropy_multivar <- entropiaMultivar(input_df, vars_to_study_input)
+output_entropy_multivar <- entropiaMultivar(ouput_df, vars_to_study_output)
+
 ########################
 
 

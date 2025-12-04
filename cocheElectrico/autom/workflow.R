@@ -34,8 +34,13 @@ for (i in infiles) {
   )
 }
 
+file_cost <- paste0(thisScript_path,"/csvs/outputs/costs.csv")
+file_shr <- paste0(thisScript_path,"/csvs/outputs/sharewheights.csv")
+file_output <- paste0(thisScript_path,"/csvs/outputs/output.csv")
+file1 <- paste0(thisScript_path, "/csvs/inputs/OTAQ_trn_data_EMF37.csv")
+file2 <- paste0(thisScript_path, "/csvs/inputs/A54.globaltranTech_shrwt_revised.csv")
 
-for (i in 1:n_iterations){
+for (i in 158:n_iterations){
   print(paste0('########################################## iteration ',i,' ##########################################'))
   ###############Change config file and output xml files###############
   modify_config_file(new_config_name = paste0("elecCar_", i), config_path = config_file)
@@ -87,24 +92,24 @@ for (i in 1:n_iterations){
     ]
     
     if (grepl("COST", file)) {
-      if (i == 1) {
-        write.csv(outfile_df_filtered, paste0(thisScript_path,"/csvs/outputs/costs.csv"), row.names = FALSE)
+      if (!file.exists(file_cost)){
+        write.csv(outfile_df_filtered, file_cost, row.names = FALSE)
       } else {
-        write.table(outfile_df_filtered, paste0(thisScript_path,"/csvs/outputs/costs.csv"), row.names = FALSE, col.names = FALSE, append = TRUE, sep = ",")
+        write.table(outfile_df_filtered, file_cost, row.names = FALSE, col.names = FALSE, append = TRUE, sep = ",")
       }
     }
     if (grepl("SW", file)) {
-      if (i == 1) {
-        write.csv(outfile_df_filtered,  paste0(thisScript_path,"/csvs/outputs/sharewheights.csv"), row.names = FALSE)
+      if (!file.exists(file_shr)) {
+        write.csv(outfile_df_filtered,  file_shr, row.names = FALSE)
       } else {
-        write.table(outfile_df_filtered,  paste0(thisScript_path,"/csvs/outputs/sharewheights.csv"), row.names = FALSE, col.names = FALSE, append = TRUE, sep = ",")
+        write.table(outfile_df_filtered, file_shr, row.names = FALSE, col.names = FALSE, append = TRUE, sep = ",")
       }
     }
     if (grepl("OUTPUT", file)) {
-      if (i == 1) {
-        write.csv(outfile_df_filtered,  paste0(thisScript_path,"/csvs/outputs/output.csv"), row.names = FALSE)
+      if  (!file.exists(file_output)) {
+        write.csv(outfile_df_filtered,  file_output, row.names = FALSE)
       } else {
-        write.table(outfile_df_filtered,  paste0(thisScript_path,"/csvs/outputs/output.csv"), row.names = FALSE, col.names = FALSE, append = TRUE, sep = ",")
+        write.table(outfile_df_filtered,  file_output, row.names = FALSE, col.names = FALSE, append = TRUE, sep = ",")
       }
     }
   }
@@ -124,9 +129,7 @@ for (i in 1:n_iterations){
                                                                                (df_A54.globaltranTech_shrwt_revised$supplysector == 'trn_pass_road_LDV_4W'), ]
   #Save a scenario column 
   df_A54.globaltranTech_shrwt_revised$'scenario' = scenario
-  
-  file1 <- paste0(thisScript_path, "/csvs/inputs/OTAQ_trn_data_EMF37.csv")
-  file2 <- paste0(thisScript_path, "/csvs/inputs/A54.globaltranTech_shrwt_revised.csv")
+
   
   if (!file.exists(file1)) {
     write.csv(df_OTAQ_trn_data_EMF37, file1, row.names = FALSE)

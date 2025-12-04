@@ -145,3 +145,5 @@ output_df <- output_long %>%
   select(Year, region, technology, cost, shareweights, output, scenario)
 
 rm(list = setdiff(ls(), c("output_df", "input_df")))
+write.csv(output_df, "output_df.csv", row.names = FALSE)
+write.csv(input_df, "input_df.csv", row.names = FALSE)

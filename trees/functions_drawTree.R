@@ -406,53 +406,65 @@ searchChunks <- function(file_objetivo){
 }
 
 
-##################################################### OTHERS
-
-draw_full_graphviz_txt <- function(tree, path_out) {
-  dot <- "digraph GCAM_Full {\n  rankdir=TB;\n"
-
-  for (func in names(tree)) {
-    inputs <- tree[[func]]$inputs
-    outputs <- tree[[func]]$outputs
-
-    for (inp in inputs) {
-      dot <- paste0(dot, sprintf('  "%s" -> "%s";\n', inp, func))
-    }
-    for (out in outputs) {
-      dot <- paste0(dot, sprintf('  "%s" -> "%s";\n', func, out))
-    }
-  }
-
-  dot <- paste0(dot, "}\n")
-
-  # Guardar en un archivo de texto
-  writeLines(dot, con = path_out)
-  message(sprintf("Archivo DOT guardado en: %s", normalizePath(path_out)))
-}
+# debugger_chunk <- function(chunk){
+#   #path <-
+#   inputs <- in_out_func_names(path)$inputs
+#   interm_files <- list.files(paste0(dir_gcamdata, '/outputs'))
+# 
+#   for (input in inputs){
+#     if (paste0(input, '.csv') %in% interm_files){
+# 
+#     }
+#   }
+# }
 
 
-draw_function_graphviz_txt <- function(tree, path_out) {
-  dot <- "digraph GCAM_Functions {\n  rankdir=TB;\n"
 
-  funcs <- names(tree)
-
-  for (func in funcs) {
-    inputs <- tree[[func]]$inputs
-
-    # Encontrar qué funciones producen esos inputs
-    for (other in funcs) {
-      outputs_other <- tree[[other]]$outputs
-      if (any(outputs_other %in% inputs)) {
-        dot <- paste0(dot, sprintf('  "%s" -> "%s";\n', other, func))
-      }
-    }
-  }
-
-  dot <- paste0(dot, "}\n")
-
-  # Guardar en un archivo de texto
-  writeLines(dot, con = path_out)
-  message(sprintf("Archivo DOT guardado en: %s", normalizePath(path_out)))
-}
-
-
+# draw_full_graphviz_txt <- function(tree, path_out) {
+#   dot <- "digraph GCAM_Full {\n  rankdir=TB;\n"
+# 
+#   for (func in names(tree)) {
+#     inputs <- tree[[func]]$inputs
+#     outputs <- tree[[func]]$outputs
+# 
+#     for (inp in inputs) {
+#       dot <- paste0(dot, sprintf('  "%s" -> "%s";\n', inp, func))
+#     }
+#     for (out in outputs) {
+#       dot <- paste0(dot, sprintf('  "%s" -> "%s";\n', func, out))
+#     }
+#   }
+# 
+#   dot <- paste0(dot, "}\n")
+# 
+#   # Guardar en un archivo de texto
+#   writeLines(dot, con = path_out)
+#   message(sprintf("Archivo DOT guardado en: %s", normalizePath(path_out)))
+# }
+# 
+# 
+# draw_function_graphviz_txt <- function(tree, path_out) {
+#   dot <- "digraph GCAM_Functions {\n  rankdir=TB;\n"
+# 
+#   funcs <- names(tree)
+# 
+#   for (func in funcs) {
+#     inputs <- tree[[func]]$inputs
+# 
+#     # Encontrar qué funciones producen esos inputs
+#     for (other in funcs) {
+#       outputs_other <- tree[[other]]$outputs
+#       if (any(outputs_other %in% inputs)) {
+#         dot <- paste0(dot, sprintf('  "%s" -> "%s";\n', other, func))
+#       }
+#     }
+#   }
+# 
+#   dot <- paste0(dot, "}\n")
+# 
+#   # Guardar en un archivo de texto
+#   writeLines(dot, con = path_out)
+#   message(sprintf("Archivo DOT guardado en: %s", normalizePath(path_out)))
+# }
+# 
+# 

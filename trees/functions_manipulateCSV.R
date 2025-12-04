@@ -66,6 +66,9 @@ add_rowsToCsv <- function(csv_file, rows){
   write.csv(df_actualizado, path, row.names = FALSE)
   
 }
+
+
+
 manipulate_CSVByeFunc <- function(csv_file, old_techno_name, new_techno_name,
                                   extra_words = NULL, func = NULL) {
   dir_iniciar <- getwd()
@@ -130,70 +133,256 @@ manipulate_CSVByeFunc <- function(csv_file, old_techno_name, new_techno_name,
   writeLines(headers, path)
   suppressWarnings(
     write.table(df_final, path, sep = ",", append = TRUE, 
-                row.names = FALSE, quote = FALSE, na = "")
-    
+                row.names = FALSE, quote = TRUE, na = "", col.names = TRUE)
   )
+    
 }
 
-
-manipulate_CSVByeFunc_dual <- function(csv_file, old_substring1, new_name1, old_substring2, new_name2, func = NULL) {
+manipulate_CSVByeFunc_substring <- function(csv_file, old_techno_name, new_techno_name,
+                                            extra_words = NULL, func = NULL) {
   dir_iniciar <- getwd()
   on.exit(setwd(dir_iniciar), add = TRUE)
   setwd(dir_csvs_iniciales)
   
+  # Cargar CSV
   l <- get_csv_info(csv_file)
   df <- l$df
   headers <- l$header_lines
   path <- l$path
   
-  # Función auxiliar: verifica si alguna celda de la fila contiene el substring (case-insensitive)
-  fila_contiene_substring <- function(fila, substring) {
-    any(grepl(substring, fila, ignore.case = TRUE))
+  # Columnas de texto únicamente
+  text_cols <- names(df)[sapply(df, is.character)]
+  
+  # Función para buscar substring (ignore case)
+  contains_substring <- function(row, pattern) {
+    any(sapply(row[text_cols], function(cell) {
+      grepl(pattern, cell, ignore.case = TRUE)
+    }))
   }
   
-  # Filtrar filas donde ambas substrings estén presentes en alguna celda
-  df_filtered <- df[
-    apply(df, 1, function(fila) fila_contiene_substring(fila, old_substring1) && fila_contiene_substring(fila, old_substring2)),
-  ]
+  contains_extra <- function(row) {
+    if (is.null(extra_words)) return(FALSE)
+    any(sapply(extra_words, function(w)
+      contains_substring(row, w)
+    ))
+  }
   
-  # Función para reemplazar substring por nuevo nombre en todas las celdas (case-insensitive)
-  replaceSubstringInDataFrame <- function(df, old_substring, new_word) {
-    for (col in seq_along(df)) {
-      df[[col]] <- gsub(old_substring, new_word, df[[col]], ignore.case = TRUE)
+  # Filtrar filas que contengan old_techno_name como substring
+  rows_idx <- sapply(seq_len(nrow(df)), function(i) {
+    row <- df[i, ]
+    if (!is.null(extra_words)) {
+      contains_extra(row) && contains_substring(row, old_techno_name)
+    } else {
+      contains_substring(row, old_techno_name)
     }
-    df
+  })
+  
+  df_filtered <- df[rows_idx, , drop = FALSE]
+  
+  # Reemplazo por substring en columnas character
+  for (col in text_cols) {
+    df_filtered[[col]] <- sapply(df_filtered[[col]], function(cell) {
+      if (is.na(cell)) return(cell)
+      # Reemplaza todas las ocurrencias de old_techno_name por new_techno_name (ignore case)
+      gsub(old_techno_name, new_techno_name, cell, ignore.case = TRUE)
+    })
   }
   
-  # Reemplazar ambos substrings
-  df_filtered <- replaceSubstringInDataFrame(df_filtered, old_substring1, new_name1)
-  df_filtered <- replaceSubstringInDataFrame(df_filtered, old_substring2, new_name2)
-  
-  # Si func NO es NULL, aplicar cálculo para columnas numéricas
+  # Función numérica si aplica
   if (!is.null(func)) {
-    numeric_cols <- getNumericColumns(df_filtered)
-    
-    if (length(numeric_cols) > 0) {
-      for (col in numeric_cols) {
-        value_calc <- func(df[[col]], na.rm = TRUE)
-        if (all(df[[col]] %% 1 == 0, na.rm = TRUE)) {
-          value_to_change <- round(value_calc)
-        } else {
-          value_to_change <- value_calc
-        }
-        df_filtered[[col]] <- value_to_change
+    numeric_cols <- names(df)[sapply(df, is.numeric)]
+    for (col in numeric_cols) {
+      value_calc <- func(df[[col]], na.rm = TRUE)
+      if (all(df[[col]] %% 1 == 0, na.rm = TRUE)) {
+        value_calc <- round(value_calc)
       }
+      df_filtered[[col]] <- value_calc
     }
   }
   
-  # Añadir filas modificadas al df original
+  # Combinar
   df_final <- rbind(df, df_filtered)
   
-  # Guardar manteniendo headers y sin comillas
+  # Reescribir CSV
   writeLines(headers, path)
   suppressWarnings(
-    write.table(df_final, path, sep = ",", append = TRUE, row.names = FALSE, quote = FALSE)
+    write.table(df_final, path, sep = ",", append = TRUE, 
+                row.names = FALSE, quote = TRUE, na = "", col.names = TRUE)
   )
 }
+
+
+
+
+
+
+manipulate_csv_replace_exact <- function(csv_file, 
+                                         filter_word_exact,   
+                                         target_word_exact,    
+                                         replacement_word){
+  dir_iniciar <- getwd()
+  on.exit(setwd(dir_iniciar), add = TRUE)
+  setwd(dir_csvs_iniciales)
+  
+  # Cargar CSV
+  l <- get_csv_info(csv_file)
+  df <- l$df
+  headers <- l$header_lines
+  path <- l$path
+  
+  # Columnas de texto únicamente
+  text_cols <- names(df)[sapply(df, is.character)]
+  
+  # Filtrar filas que contienen EXACTAMENTE filter_word_exact en alguna columna texto
+  rows_with_filter_word <- apply(df[text_cols], 1, function(row) {
+    any(tolower(row) == tolower(filter_word_exact))
+  })
+  
+  df_filtered <- df[rows_with_filter_word, , drop = FALSE]
+  
+  # Dentro del filtrado, encontrar filas que contienen EXACTAMENTE target_word_exact
+  rows_with_target_word <- apply(df_filtered[text_cols], 1, function(row) {
+    any(tolower(row) == tolower(target_word_exact))
+  })
+  
+  df_to_modify <- df_filtered[rows_with_target_word, , drop = FALSE]
+  
+  # Reemplazar EXACTO target_word_exact por replacement_word en las filas a modificar
+  for (col in text_cols) {
+    match_idx <- tolower(df_to_modify[[col]]) == tolower(target_word_exact)
+    df_to_modify[[col]][match_idx] <- replacement_word
+  }
+  
+  # Filas originales a eliminar: las que contienen filter_word_exact y target_word_exact
+  rows_to_remove <- rows_with_filter_word & apply(df[text_cols], 1, function(row) {
+    any(tolower(row) == tolower(target_word_exact))
+  })
+  
+  # Combinar filas originales menos las eliminadas, con las modificadas
+  df_final <- rbind(df[!rows_to_remove, , drop = FALSE], df_to_modify)
+  
+  # Reescribir CSV con encabezados originales
+  writeLines(headers, path)
+  suppressWarnings(
+    write.table(df_final, path, sep = ",", append = TRUE, 
+                row.names = FALSE, quote = TRUE, na = "", col.names = TRUE)
+  )
+}
+
+manipulate_csv_replace_contains <- function(csv_file, 
+                                            filter_word,     
+                                            target_word,     
+                                            replacement_word){
+  dir_iniciar <- getwd()
+  on.exit(setwd(dir_iniciar), add = TRUE)
+  setwd(dir_csvs_iniciales)
+  
+  # Cargar CSV
+  l <- get_csv_info(csv_file)
+  df <- l$df
+  headers <- l$header_lines
+  path <- l$path
+  
+  # Columnas de texto únicamente
+  text_cols <- names(df)[sapply(df, is.character)]
+  
+  # Filas que contienen filter_word en algún texto
+  rows_with_filter_word <- apply(df[text_cols], 1, function(row) {
+    any(grepl(filter_word, row, ignore.case = TRUE))
+  })
+  
+  df_filtered <- df[rows_with_filter_word, , drop = FALSE]
+  
+  # Dentro del filtrado, filas que contienen target_word
+  rows_with_target_word <- apply(df_filtered[text_cols], 1, function(row) {
+    any(grepl(target_word, row, ignore.case = TRUE))
+  })
+  
+  df_to_modify <- df_filtered[rows_with_target_word, , drop = FALSE]
+  
+  # Reemplazar target_word por replacement_word (solo en coincidencias dentro de la celda)
+  for (col in text_cols) {
+    df_to_modify[[col]] <- gsub(target_word, replacement_word, 
+                                df_to_modify[[col]], ignore.case = TRUE)
+  }
+  
+  # Filas originales a eliminar: las que contienen filter_word Y target_word
+  rows_to_remove <- apply(df[text_cols], 1, function(row) {
+    any(grepl(filter_word, row, ignore.case = TRUE)) &&
+      any(grepl(target_word, row, ignore.case = TRUE))
+  })
+  
+  # Combinar filas finales
+  df_final <- rbind(df[!rows_to_remove, , drop = FALSE], df_to_modify)
+  
+  # Reescribir CSV con encabezados originales
+  writeLines(headers, path)
+  suppressWarnings(
+    write.table(df_final, path, sep = ",", append = TRUE, 
+                row.names = FALSE, quote = TRUE, na = "",col.names = TRUE)
+  )
+}
+
+
+
+# manipulate_CSVByeFunc_dual <- function(csv_file, old_substring1, new_name1, old_substring2, new_name2, func = NULL) {
+#   dir_iniciar <- getwd()
+#   on.exit(setwd(dir_iniciar), add = TRUE)
+#   setwd(dir_csvs_iniciales)
+#   
+#   l <- get_csv_info(csv_file)
+#   df <- l$df
+#   headers <- l$header_lines
+#   path <- l$path
+#   
+#   # Función auxiliar: verifica si alguna celda de la fila contiene el substring (case-insensitive)
+#   fila_contiene_substring <- function(fila, substring) {
+#     any(grepl(substring, fila, ignore.case = TRUE))
+#   }
+#   
+#   # Filtrar filas donde ambas substrings estén presentes en alguna celda
+#   df_filtered <- df[
+#     apply(df, 1, function(fila) fila_contiene_substring(fila, old_substring1) && fila_contiene_substring(fila, old_substring2)),
+#   ]
+#   
+#   # Función para reemplazar substring por nuevo nombre en todas las celdas (case-insensitive)
+#   replaceSubstringInDataFrame <- function(df, old_substring, new_word) {
+#     for (col in seq_along(df)) {
+#       df[[col]] <- gsub(old_substring, new_word, df[[col]], ignore.case = TRUE)
+#     }
+#     df
+#   }
+#   
+#   # Reemplazar ambos substrings
+#   df_filtered <- replaceSubstringInDataFrame(df_filtered, old_substring1, new_name1)
+#   df_filtered <- replaceSubstringInDataFrame(df_filtered, old_substring2, new_name2)
+#   
+#   # Si func NO es NULL, aplicar cálculo para columnas numéricas
+#   if (!is.null(func)) {
+#     numeric_cols <- getNumericColumns(df_filtered)
+#     
+#     if (length(numeric_cols) > 0) {
+#       for (col in numeric_cols) {
+#         value_calc <- func(df[[col]], na.rm = TRUE)
+#         if (all(df[[col]] %% 1 == 0, na.rm = TRUE)) {
+#           value_to_change <- round(value_calc)
+#         } else {
+#           value_to_change <- value_calc
+#         }
+#         df_filtered[[col]] <- value_to_change
+#       }
+#     }
+#   }
+#   
+#   # Añadir filas modificadas al df original
+#   df_final <- rbind(df, df_filtered)
+#   
+#   # Guardar manteniendo headers y sin comillas
+#   writeLines(headers, path)
+#   suppressWarnings(
+#     write.table(df_final, path, sep = ",", append = TRUE, row.names = FALSE, quote = FALSE)
+#   )
+# }
 
 
 

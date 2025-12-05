@@ -7,7 +7,6 @@ setwd(dir_gcamdata)
 devtools::load_all()
 
 
-
 totalTree <- build_tree()
 all_initial_files <- get_all_initial_files(totalTree)
 gcam_comm <- 'Vegetables'
@@ -40,7 +39,7 @@ search_exact <- function(df, word) {
     any(col == word)
   }))
 }
-files_gcamComm[!files_gcamComm %in% c("aglu/FAO/GCAMFAOSTAT_FBSH_CB", "aglu/FAO/GCAMFAOSTAT_FodderProdArea")]
+#files_gcamComm[!files_gcamComm %in% c("aglu/FAO/GCAMFAOSTAT_FBSH_CB", "aglu/FAO/GCAMFAOSTAT_FodderProdArea")]
 
 
 
@@ -70,9 +69,7 @@ for (file in files_gcamComm){
 }
  
 
-for (file in files_gcamComm){
-  sear
-}
+driver_drake()
 
 
 
@@ -82,132 +79,87 @@ for (file in files_gcamComm){
 
 
 
-
-
-
+######################################### BORRADOR
 
 #Por ello, vamos a buscar en qué csv's aparece algún commodity seleccionado. Por ejemplo: Vegetables
-totalTree <- build_tree()
-
-all_initial_files <- get_all_initial_files(totalTree)
-gcam_comm <- 'GCAM_commodity'
-interested_commodity <- 'Vegetables'
-files_gcamComm <- c()
-for (i in all_initial_files){
-  df <- data.frame(load_csv_files(i, optional = TRUE))
-  
-  # 1. Buscar en las celdas
-  match_cells <- any(grepl(gcam_comm, as.matrix(df), ignore.case = TRUE))
-  
-  # 2. Buscar en los nombres de las columnas
-  match_cols <- any(grepl(gcam_comm, colnames(df), ignore.case = TRUE))
-  
-  #3. Buscar el commodity de interes
-  match_cells_veg <- any(grepl('Vegetables', as.matrix(df), ignore.case = TRUE))
-  
-  if ((match_cells || match_cols) & match_cells_veg) {
-    files_gcamComm <- c(files_gcamComm, i)
-  }
-}
-
-
-
-files_gcamComm <- unique(files_gcamComm)
-
-trtmiento_Mordor <- c('aglu/A_LT_Mapping',
-                     'aglu/A_agStorageSector',
-                     'aglu/A_defaultYieldRate',
-                     'socioeconomics/GTAP/GCAM_GTAP_sector_mapping_AgLU',
-                     "aglu/A_agSupplySector",
-                     "aglu/A_agSupplySubsector",
-                     "aglu/GCAMLandLeaf_CdensityLT",
-                     "aglu/A_demand_technology",
-                     "aglu/A_an_input_technology") 
-trtmiento_tomate <- c('aglu/FAO/FAO_ag_items_PRODSTAT',
-                      'aglu/FAO/Mapping_SUA_PrimaryEquivalent')
-trtmiento_tomate_aprox <- c('aglu/FAO/Mapping_item_FBS_GCAM')
-
-files_gcamComm_new <- c(trtmiento_Mordor,trtmiento_tomate,trtmiento_tomate_aprox)
-
-for (file in trtmiento_tomate){
-  manipulate_csv_replace_exact(csv_file = file,
-                               filter_word_exact = 'Tomatoes',
-                               target_word_exact = 'Vegetables',
-                               replacement_word = 'Tomatoes')
-}
-
-for (file in trtmiento_tomate_aprox){
-  manipulate_csv_replace_contains(csv_file = file,
-                               filter_word = 'Tomatoes',
-                               target_word = 'Vegetables',
-                               replacement_word = 'Tomatoes')
-}
-
-for (file in trtmiento_Mordor){
-  manipulate_CSVByeFunc(csv_file = file,
-                        old_techno_name = 'Vegetables', 
-                        new_techno_name = 'Tomatoes')
-}
-
-
-### mirar LandLeaf, en prodstat mirar LandLeaf, agStorageSector?
-
-# for (file in files_gcamComm){
-#   
+# totalTree <- build_tree()
+# 
+# all_initial_files <- get_all_initial_files(totalTree)
+# gcam_comm <- 'GCAM_commodity'
+# interested_commodity <- 'Vegetables'
+# files_gcamComm <- c()
+# for (i in all_initial_files){
+#   df <- data.frame(load_csv_files(i, optional = TRUE))
+# 
+#   # 1. Buscar en las celdas
+#   match_cells <- any(grepl(gcam_comm, as.matrix(df), ignore.case = TRUE))
+# 
+#   # 2. Buscar en los nombres de las columnas
+#   match_cols <- any(grepl(gcam_comm, colnames(df), ignore.case = TRUE))
+# 
+#   #3. Buscar el commodity de interes
+#   match_cells_veg <- any(grepl('Vegetables', as.matrix(df), ignore.case = TRUE))
+# 
+#   if ((match_cells || match_cols) & match_cells_veg) {
+#     files_gcamComm <- c(files_gcamComm, i)
+#   }
 # }
 # 
-# for (file in files_gcamComm) {
-#   tryCatch({
-#     manipulate_CSVByeFunc_eliminating(
-#       csv_file = file, 
-#       old_techno_name = gcam_comm, 
-#       new_techno_name = 'Tomatoes',
-#       extra_words = NULL, 
-#       word_to_remove = 'Tomatoes'
-#     )
-#   }, error = function(e) {
-#     message(sprintf("Se saltó el archivo %s por error: %s", file, e$message))
-#   })
+# 
+# 
+# files_gcamComm <- unique(files_gcamComm)
+# 
+# trtmiento_Mordor <- c('aglu/A_LT_Mapping',
+#                      'aglu/A_agStorageSector',
+#                      'aglu/A_defaultYieldRate',
+#                      'socioeconomics/GTAP/GCAM_GTAP_sector_mapping_AgLU',
+#                      "aglu/A_agSupplySector",
+#                      "aglu/A_agSupplySubsector",
+#                      "aglu/GCAMLandLeaf_CdensityLT",
+#                      "aglu/A_demand_technology",
+#                      "aglu/A_an_input_technology")
+# trtmiento_tomate <- c('aglu/FAO/FAO_ag_items_PRODSTAT',
+#                       'aglu/FAO/Mapping_SUA_PrimaryEquivalent')
+# trtmiento_tomate_aprox <- c('aglu/FAO/Mapping_item_FBS_GCAM')
+# 
+# files_gcamComm_new <- c(trtmiento_Mordor,trtmiento_tomate,trtmiento_tomate_aprox)
+# 
+# for (file in trtmiento_tomate){
+#   manipulate_csv_replace_exact(csv_file = file,
+#                                filter_word_exact = 'Tomatoes',
+#                                target_word_exact = 'Vegetables',
+#                                replacement_word = 'Tomatoes')
 # }
-
-
-
-
-
-commodity = 'Vegetables'
-
-#coincidencia aprox
-files_veg <- c()
-for (i in all_initial_files){
-  df <- get_csv_info(i)$df
-  if (any(grepl(commodity, as.matrix(df), ignore.case = TRUE))){
-    files_veg <- c(files_veg, i)
-  }
-}
-files_veg <- unique(files_veg)
-files_veg_filtered <- files_veg[ !(files_veg %in% files_gcamComm)]
-
-
-# for (i in files_veg_filtered){
-#   manipulate_CSVByeFunc(i, old_techno_name = 'Vegetables', new_techno_name = 'Tomatoes')
+# 
+# for (file in trtmiento_tomate_aprox){
+#   manipulate_csv_replace_contains(csv_file = file,
+#                                filter_word = 'Tomatoes',
+#                                target_word = 'Vegetables',
+#                                replacement_word = 'Tomatoes')
 # }
-
-
-
-############################################
-
-
-file_objetivo <- 'IFA2002_Fert_ktN'
-
-totalTree <- build_tree()
-
-chunksWithFile <- c()
-for (i in 1:length(totalTree)){
-  inputs <- totalTree[[i]]$'inputs'
-  for (input in inputs){
-    if (grepl('FAO_ag_items_PRODSTAT',input)){
-      chunksWithFile <- c(chunksWithFile, names(totalTree[i]))
-    }
-  }
-}
-
+# 
+# for (file in trtmiento_Mordor){
+#   manipulate_CSVByeFunc(csv_file = file,
+#                         old_techno_name = 'Vegetables',
+#                         new_techno_name = 'Tomatoes')
+# }
+# 
+# 
+# 
+# ############################################
+# 
+# 
+# file_objetivo <- 'IFA2002_Fert_ktN'
+# 
+# totalTree <- build_tree()
+# 
+# chunksWithFile <- c()
+# for (i in 1:length(totalTree)){
+#   inputs <- totalTree[[i]]$'inputs'
+#   for (input in inputs){
+#     if (grepl('FAO_ag_items_PRODSTAT',input)){
+#       chunksWithFile <- c(chunksWithFile, names(totalTree[i]))
+#     }
+#   }
+# }
+# 

@@ -8,7 +8,7 @@ devtools::load_all()
 
 
 totalTree <- build_tree()
-all_initial_files <- get_all_initial_files(totalTree)
+all_initial_files <- get_all_initial_files(totalTree)ush
 gcam_comm <- 'Vegetables'
 files_gcamComm <- c()
 for (i in all_initial_files){

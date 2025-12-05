@@ -8,7 +8,7 @@ devtools::load_all()
 
 
 totalTree <- build_tree()
-all_initial_files <- get_all_initial_files(totalTree)ush
+all_initial_files <- get_all_initial_files(totalTree)
 gcam_comm <- 'Vegetables'
 files_gcamComm <- c()
 for (i in all_initial_files){
@@ -39,7 +39,14 @@ search_exact <- function(df, word) {
     any(col == word)
   }))
 }
-#files_gcamComm[!files_gcamComm %in% c("aglu/FAO/GCAMFAOSTAT_FBSH_CB", "aglu/FAO/GCAMFAOSTAT_FodderProdArea")]
+
+files_gcamComm <- files_gcamComm[!files_gcamComm %in% c("aglu/FAO/GCAMFAOSTAT_FBSH_CB", 
+                                      "aglu/FAO/GCAMFAOSTAT_FodderProdArea",
+                                      "aglu/FAO/SUA_item_code_map",
+                                      "aglu/FAO/GCAMFAOSTAT_NonFodderProdArea",
+                                      "aglu/FAO/GCAMFAOSTAT_FBSH_CB",
+                                      "aglu/FAO/GCAMFAOSTAT_MacroNutrientRate")]
+#files_gcamComm_sinFAO <- files_gcamComm[!grepl("FAO", files_gcamComm)]
 
 
 

@@ -394,15 +394,17 @@ filter_csvs_by_exact_name <- function(csv_files, target_name) {
   csvs_match <- c()
   
   contains_exact_name <- function(df, name) {
-    # Convertir todo a minúsculas para comparar
     name <- tolower(name)
-    # Reemplazar NAs por ""
+    # Buscar en los nombres de columnas
+    cols_match <- any(tolower(names(df)) == name)
+    # Buscar en los valores de las celdas
     df_lower <- apply(df, 2, function(col) {
       col[is.na(col)] <- ""
+      col <- iconv(col, from = "", to = "UTF-8", sub = "")
       tolower(col)
     })
-    # Comprobar si en alguna celda está el nombre exactamente
-    any(df_lower == name)
+    vals_match <- any(df_lower == name)
+    cols_match || vals_match
   }
   
   for (csv_file in csv_files) {

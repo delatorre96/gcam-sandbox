@@ -1,3 +1,11 @@
+set_gcam_paths <- function(gcam_path) {
+  #Exmple:
+  #dir_gcamdata <- "C:/Users/ignacio.delatorre/Documents/Understanding GCAM/gcam-core/input/gcamdata"
+  dir_gcam <<- gcam_path
+  dir_gcamdata <<- paste0(gcam_path,'/input/gcamdata')
+  dir_chunks <<- paste0(dir_gcamdata,'/R')
+  dir_csvs_iniciales <<- paste0(dir_gcamdata,'/inst/extdata')
+}
 
 get_csv_info <- function(csv_file) {
   dir_iniciar <- getwd()

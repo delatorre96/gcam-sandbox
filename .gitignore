@@ -9,3 +9,5 @@
 *.xml
 *.pkl
 *.pickle
+*.dat
+*.html

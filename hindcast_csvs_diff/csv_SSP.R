@@ -61,7 +61,7 @@ close(con)
 
 
 ######################## Buscar variable:
-variable <- 'aglu.AGLU_HISTORICAL_YEARS'
+variable <- 'EPA_2019_MACC_Ag_updated_baseline'
 
 carpeta_scripts <- "C:/Users/ignacio.delatorre/Documents/GCAM/gcam-core/input/gcamdata/R"
 
@@ -78,3 +78,19 @@ archivos_con_variable <- sapply(archivos, function(f) {
 archivos_con_variable <- names(archivos_con_variable)[archivos_con_variable]
 
 print(archivos_con_variable)
+
+
+
+######################## Tree  land
+treeZaglu <- build_tree_module(modules = 'zaglu')
+ances <- find_ancestors(treeZaglu, target = 'L125.LC_bm2_R')
+draw_subgraph(treeZaglu,'L125.LC_bm2_R')
+
+for (i in ances){
+  print(i)
+  link <- paste0('R/',i)
+  lines <- readLines(link)
+  doc_lines <- grep("^#'", lines, value = TRUE)
+  cat(paste(doc_lines, collapse = "\n"))
+}
+

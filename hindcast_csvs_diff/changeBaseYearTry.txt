@@ -33,7 +33,30 @@ input/gcamdata/inst/extdata/emissions/EPA/EPA_2019_MACC_raw.csv.gz
 input/gcamdata/inst/extdata/energy/A44.CalPrice_bld.csv
 input/gcamdata/inst/extdata/socioeconomics/income_shares.csv
 
-Con estos cambios el Data System funciona y se ejecuta correctamente. Sin embargo cuando corro GCAM me saca error. Creo que viene dado por el las líneas de código que comenté en module_aglu_L125.LC_tot. 
+Con estos cambios el Data System funciona y se ejecuta correctamente. Sin embargo cuando corro GCAM me saca error. Creo que viene dado por el las líneas de código que comenté en module_aglu_L125.LC_tot. Por ello, en vez de comentarlas trato de gestionarlas. Veo que el data frame que se construye tiene que ver con el tipo de tierra y los cambios en la misma año a año, de ahí que se compare con aglu.LAND_TOLERANCE de manera que si es superior a una tolerancia de cambio demasiado grande, se pare. Por ello, ejecuto un data system de GCAM sin ningún cambio previo y lo meto en el proceso como un data frame exógeno en ese punto, eliminando los años posteriores a 2015. Me funciona. Sin embargo cuando termino de ejecutar el data system me sale el siguiente mensaje: 
+Avisos:
+1: In gcamdata:::module_energy_L1011.en_bal_adj("MAKE", c(common.iso_GCAM_regID,  :
+  Extending L1011.in_EJ_ctry_intlship_TOT_Yh by using relative growth in L101.in_EJ_ctry_trn_Fi_Yh
+2: In gcamdata:::module_aglu_L108.ag_Feed_R_C_Y("MAKE", c(common.iso_GCAM_regID,  :
+  Negative values are observered in ag_Feed_Mt_R_Cnf_Y of module_aglu_L108.ag_Feed_R_C_Y.
+3: In run_xml_conversion(set_xml_file_helper(water_demand_livestock.xml[[1]],  :
+  Error outputing tree: java.io.FileNotFoundException: xml\water_demand_livestock.xml (La operaci n solicitada no se puede realizar en un archivo con una secci n asignada a usuario abierta)
+4: In grepl(pattern, msg, fixed = TRUE) :
+  input string 1 is invalid in this locale
+5: In grepl(pattern, msg, fixed = TRUE) :
+  input string 1 is invalid in this locale
+6: In gcamdata:::module_gcamusa_L1236.elec_load_segments_solver("MAKE",  :
+  Not solving non gcamusa.LOAD_SEG_CAL_YEARS years and extending forward, load shape is being adjusted to match
+
+Además cuando ejecuto GCAM, me vuelven a salir muchos errores
+
+
+
+
+
+
+
+Error en module_aglu_L107.an_IMAGE_R_C_Sys_Fd_Y en linea 110, un left join en donde entre L107.an_Prod_Mt_ctry_C_Y y L100.IMAGE_an_Prodmixfrac_ctry_C_Y, entro en L100.IMAGE_an_Prodmixfrac_ctry_C_Y y veo que value esta lleno de NaNs. Voy al chunk module_aglu_L100.IMAGE_downscale_ctry_yr
 
 
 

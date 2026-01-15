@@ -154,7 +154,7 @@ draw_full_graph <- function(tree, output_path = paste0(target, "_GCAM_Full.html"
 }
 
 
-draw_function_graph <- function(tree, output_path = paste0(target, "_GCAM_Functions.html")) {
+draw_function_graph <- function(tree, output_path = paste0(rstudioapi::getActiveDocumentContext()$path,target, "_GCAM_Functions.html")) {
   funcs <- names(tree)
   edges <- character(0)
 
@@ -207,7 +207,7 @@ find_ancestors <- function(tree, target, visited = character()) {
 
 
 draw_subgraph <- function(tree, target,
-                          output_path = paste0(target, "_GCAM_Subgraph.html")) {
+                          output_path = paste0(rstudioapi::getActiveDocumentContext()$path,target, "_GCAM_Subgraph.html")) {
 
   # --- Si el target es un archivo R, lo tratamos como función ---
   if (grepl("\\.R$", target, ignore.case = TRUE)) {

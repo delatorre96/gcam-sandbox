@@ -61,7 +61,7 @@ close(con)
 
 
 ######################## Buscar variable:
-variable <- 'EPA_2019_MACC_Ag_updated_baseline'
+variable <- 'gather_years'
 
 carpeta_scripts <- "C:/Users/ignacio.delatorre/Documents/GCAM/gcam-core/input/gcamdata/R"
 
@@ -74,7 +74,7 @@ archivos_con_variable <- sapply(archivos, function(f) {
   any(grepl(variable, contenido))
 })
 
-# Archivos 
+# Archivos
 archivos_con_variable <- names(archivos_con_variable)[archivos_con_variable]
 
 print(archivos_con_variable)
@@ -94,3 +94,9 @@ for (i in ances){
   cat(paste(doc_lines, collapse = "\n"))
 }
 
+for (i in 1:length(HDDCDD_data_list)) {
+  if ("2021" %in% unique(colnames(HDDCDD_data_list[[i]]))){
+    print(TRUE)
+  }
+
+}

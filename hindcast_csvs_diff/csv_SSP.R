@@ -61,7 +61,7 @@ close(con)
 
 
 ######################## Buscar variable:
-variable <- 'gather_years'
+variable <- 'L241.hfc_future'
 
 carpeta_scripts <- "C:/Users/ignacio.delatorre/Documents/GCAM/gcam-core/input/gcamdata/R"
 

@@ -27,13 +27,16 @@ clean_df <- function(df){
   #After, we calculate how many unique values has this categoric column 
   #The maximum unique values that has this categoric column will be the threshold we use to identify a numeric column as continuous or discrete
   non_numeric_cols <- sapply(df, function(x) !is.numeric(x))
-  if (!all(non_numeric_cols == FALSE)){
-  unique_counts <- sapply(df[, non_numeric_cols], function(x) length(unique(x)))
-  max_unique_values <- max(unique_counts)
+  if (any(non_numeric_cols)) {
+    unique_counts <- sapply(df[, non_numeric_cols, drop = FALSE],
+                            function(x) length(unique(x)))
+    max_unique_values <- max(unique_counts, na.rm = TRUE)
+  }  else {
+    max_unique_values <- 50
   }
   
   for (col in names(df)) {
-    
+    unique_vals <- unique(df[[col]])
     if (length(unique_vals) > max_unique_values) {
       q <- unique(quantile(df[[col]], probs = c(0, 0.25, 0.5, 0.75, 1), na.rm = TRUE))
       if (length(q) > 1) {

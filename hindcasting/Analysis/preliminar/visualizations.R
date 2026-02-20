@@ -1,0 +1,357 @@
+library(rgcam)
+library(dplyr)
+library(ggplot2)
+library(stringr)
+library(tidyr)
+
+to_global <- function(df, func = sum) {
+  df %>%
+    group_by(scenario, year) %>%
+    summarize(value = func(value, na.rm = TRUE), .groups = 'drop') %>%
+    mutate(region = "global") %>%
+    select(scenario, region, year, value)
+}
+to_global_custom <- function(df, group_cols = c("scenario", "year"), func = sum) {
+  df %>%
+    group_by(across(all_of(group_cols))) %>%
+    summarize(value = func(value, na.rm = TRUE), .groups = 'drop') %>%
+    select(any_of(group_cols), value)
+}
+
+common_table <- function(df_query){ 
+  df_query_1 <- df_query
+  df_query_1$scenario[df_query_1$scenario == "Reference"] <- "BaseYear2021"
+  key_cols <- colnames(df_query_1)
+  key_cols <- key_cols[key_cols != 'scenario' & key_cols !=  'value']
+  df_query_1 <- df_query_1 %>%
+    mutate(value = round(value, 4))
+
+  df_ref <- df_query_1 %>%
+    filter(scenario == "BaseYear2021") %>%
+    select(all_of(key_cols), BaseYear2021 = value)
+  
+  df_chY <- df_query_1 %>%
+    filter(scenario == "BaseYear2015") %>%
+    select(all_of(key_cols), BaseYear2015 = value)
+  
+  df_chY2 <- df_query_1 %>%
+    filter(scenario == "BaseYear2010") %>%
+    select(all_of(key_cols), BaseYear2010 = value)
+  
+  
+  df_comp <- df_ref %>%
+    inner_join(df_chY, by = key_cols) %>%
+    inner_join(df_chY2, by = key_cols) 
+  return(df_comp)
+}
+
+prj_path <- "C:/Users/ignacio.delatorre/Documents/GCAM/desarrollos/hindcasting/Analysis/preliminar/myProject.dat"
+
+if (!file.exists(prj_path)) {
+  pathToDbs <- "C:/Users/ignacio.delatorre/Documents/GCAM/outputs_gcam"
+  my_gcamdb_basexdb <- "BaseYear"
+  
+  conn <- localDBConn(pathToDbs, my_gcamdb_basexdb)
+  
+  myQueryfile  <- "C:/Users/ignacio.delatorre/Documents/GCAM/desarrollos/hindcasting/Analysis/preliminar/main_queries.xml"
+  
+  scenariosAnalyze<-c("Reference","BaseYear2015","BaseYear2010")
+  
+  prj1 <- addScenario(conn = conn, proj = prj_path, scenario  = scenariosAnalyze, queryFile = myQueryfile)
+  
+} else {
+  prj1 <- loadProject(proj = prj_path)
+  
+}
+
+queries <- listQueries(prj1)
+print(queries)
+
+
+##############global mean temperature############## 
+df_query <- getQuery(prj1, "global mean temperature" )
+df_com_global_temp <- common_table(df_query)
+
+plot_global_temp <- ggplot(df_query, aes(x = year, y = value, color = scenario)) +
+  geom_line(size = 1) +
+  geom_point() +
+  labs(x = "Year", y = "Degrees Celsius (%change)", color = "Scenario", 
+       title = "Global Mean Temperature") +
+  theme_minimal() +
+  theme(legend.position = c(0.7, 0.2))
+
+
+
+##############Electricity generation ##############
+
+df_query <- getQuery(prj1, "elec gen by region (incl CHP)")
+
+df_global <- to_global(df_query)
+df_com_eleGeneration <- common_table(df_global)
+
+df_global <- df_global %>% filter(year <= 2021)
+plot_eleGeneration <- ggplot(df_global, aes(x = year, y = log(value), color = scenario)) +
+  geom_line(size = 1) +
+  geom_point() +
+  labs(x = "Year", y = "log(Quantity (EJ))", color = "Scenario", 
+       title = "Production") +
+  theme_minimal() +
+  theme(legend.position = c(0.7, 0.2))
+
+
+##############elec prices by sector##############
+df_query <- getQuery(prj1, "elec prices by sector" )
+df_global <- to_global_custom(df_query, group_cols = c("scenario", "year"), func = mean)
+df_com_elecPrice   <- common_table(df_global)
+df_global$scenario <- gsub("Reference", "BaseYear2021", df_global$scenario)
+df_global <- df_global %>% filter(year <= 2025)
+
+plot_elecPrice <- ggplot(df_global, aes(x = year, y = log(value), color = scenario)) +
+  geom_line(size = 1) +
+  geom_point() +
+  labs(x = "Year", y = "log(Prices)", color = "Scenario", 
+       title = "Prices") +
+  theme_minimal() +
+  theme(legend.position = c(0.7, 0.2))
+
+
+
+##############total final energy by region##############
+df_query <- getQuery(prj1, "total final energy by region" )
+df_global <- to_global_custom(df_query, group_cols = c("scenario", "year"), func = sum)
+df_com_total_energy  <- common_table(df_global)
+df_global <- df_global %>% filter(year <= 2025)
+df_global$scenario <- gsub("Reference", "BaseYear2021", df_global$scenario)
+
+plot_total_energy <- ggplot(df_global, aes(x = year, y = log(value), color = scenario)) +
+  geom_line(size = 1) +
+  geom_point() +
+  labs(x = "Year", y = "Energy (EJ)", color = "Scenario", 
+       title = "Total final energy") +
+  theme_minimal() +
+  theme(legend.position = c(0.7, 0.2))
+
+
+
+##############consumption by fuel##############
+df_query <- getQuery(prj1, "final energy consumption by fuel" )
+df_global <- to_global_custom(df_query, group_cols = c("scenario", "year", "input"), func = sum)
+df_com_p_fuel <- common_table(df_global)
+df_com_p_fuel <-df_com_p_fuel %>%arrange(input)
+
+df_global$scenario <- gsub("Reference", "BaseYear2021", df_global$scenario)
+df_global <- df_global %>% filter(year <= 2025)
+plot_p_fuel  <- ggplot(df_global, aes(x = factor(year), y = log(value), fill = input)) +
+  geom_col() +
+  facet_wrap(~scenario, ncol = 1) +  # Aquí indicamos 1 columna para apilar verticalmente
+  labs(x = "Year", y = "Energy Consumption (EJ)", fill = "Fuel") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+
+############## "water consumption by state, sector, basin" ############## 
+df_query <- getQuery(prj1, "water consumption by state, sector, basin"  )
+df_global <- to_global_custom(df_query, group_cols = c("scenario", "year"), func = sum)
+
+df_com_total_waterconsumption <- common_table(df_global)
+df_global$scenario <- gsub("Reference", "BaseYear2021", df_global$scenario)
+df_global <- df_global %>% filter(year <= 2025)
+
+plot_total_waterconsumption <- ggplot(df_global, aes(x = year, y = log(value), color = scenario)) +
+  geom_line(size = 1) +
+  geom_point() +
+  labs(x = "Year", y = "Water Consumption (km^3)", color = "Scenario", 
+       title = "Total Water Consumption") +
+  theme_minimal() +
+  theme(legend.position = c(0.7, 0.2))
+
+
+
+############## "water withdrawals by state, sector, basin" ############## 
+
+df_query <- getQuery(prj1, "water withdrawals by state, sector, basin"  )
+df_global <- to_global_custom(df_query, group_cols = c("scenario", "year"), func = sum)
+df_com_waterWithdrawal <- common_table(df_global)
+df_global$scenario <- gsub("Reference", "BaseYear2021", df_global$scenario)
+df_global <- df_global %>% filter(year <= 2025)
+
+plot_total_waterWithdrawal <- ggplot(df_global, aes(x = year, y = log(value), color = scenario)) +
+  geom_line(size = 1) +
+  geom_point() +
+  labs(x = "Year", y = "Water Withdrawals (km^3)", color = "Scenario", 
+       title = "Total Water Withdrawals") +
+  theme_minimal() +
+  theme(legend.position = c(0.7, 0.2))
+
+
+
+##############ag production by crop type##############
+# df_query <- getQuery(prj1, "ag production by crop type" )
+# df_global <- to_global_custom(df_query, group_cols = c("scenario", "year", "output"), func = sum)
+# df_com_cropProduction <- common_table(df_global)
+# df_com_cropProduction <- df_com_cropProduction %>% arrange(output)
+# 
+# df_global$scenario <- gsub("Reference", "BaseYear2021", df_global$scenario)
+# df_global <- df_global %>% filter(year <= 2025)
+# 
+# plot_cropProduction <- ggplot(df_global, aes(x = factor(year), y = (value), fill = output)) +
+#   geom_col() +
+#   facet_wrap(~scenario, ncol = 1) +  # Aquí indicamos 1 columna para apilar verticalmente
+#   labs(x = "Year", y = "Energy Consumption (EJ)", fill = "Crop", title = 'Production by crop') +
+#   theme_minimal() +
+#   theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+
+##############ag production by subsector (land use region)############## 
+
+df_query <- getQuery(prj1, "ag production by subsector (land use region)" )
+df_global <- to_global_custom(df_query, group_cols = c("scenario", "year"), func = sum)
+df_com_ag_commodity_totalProd  <- common_table(df_global)
+df_global$scenario <- gsub("Reference", "BaseYear2021", df_global$scenario)
+df_global <- df_global %>% filter(year <= 2025)
+
+plot_ag_commodity_totalProd <- ggplot(df_global, aes(x = year, y = value, color = scenario)) +
+  geom_line(size = 1) +
+  geom_point() +
+  labs(x = "Year", y = "Production (EJ)", color = "Scenario", 
+       title = "Crop commodity total production") +
+  theme_minimal() +
+  theme(legend.position = c(0.7, 0.2))
+
+
+
+############## ag commodity prices############## 
+df_query <- getQuery(prj1, "ag commodity prices" )
+df_global <- to_global_custom(df_query, group_cols = c("scenario", "year"), func = mean)
+df_com_ag_commodity_prices<- common_table(df_global)
+df_global$scenario <- gsub("Reference", "BaseYear2021", df_global$scenario)
+df_global <- df_global %>% filter(year <= 2025)
+
+plot_ag_commodity_prices <- ggplot(df_global, aes(x = year, y = log(value), color = scenario)) +
+  geom_line(size = 1) +
+  geom_point() +
+  labs(x = "Year", y = "Prices (1975$/GJ)", color = "Scenario", 
+       title = "Crop commodity mean prices") +
+  theme_minimal() +
+  theme(legend.position = c(0.7, 0.2))
+
+#print(combined_plot)
+
+############## CO2 emissions by region############## 
+
+df_query <- getQuery(prj1, "CO2 emissions by region" )
+df_global <- to_global_custom(df_query, group_cols = c("scenario", "year"), func = sum)
+df_com_total_co2Emissions <- common_table(df_global)
+df_global$scenario <- gsub("Reference", "BaseYear2021", df_global$scenario)
+df_global <- df_global %>% filter(year <= 2025)
+
+
+plot_total_co2Emissions <- ggplot(df_global, aes(x = year, y = log(value), color = scenario)) +
+  geom_line(size = 1) +
+  geom_point() +
+  labs(x = "Year", y = "CO2 (MTC)", color = "Scenario", 
+       title = "CO2 emissions)") +
+  theme_minimal() +
+  theme(legend.position = c(0.7, 0.2))
+
+
+############## "water consumption by region"############## 
+
+df_query <- getQuery(prj1, "water consumption by region" )
+df_global <- to_global_custom(df_query, group_cols = c("scenario", "year"), func = sum)
+
+df_com_total_waterConsumption <- common_table(df_global)
+df_global$scenario <- gsub("Reference", "BaseYear2021", df_global$scenario)
+df_global <- df_global %>% filter(year <= 2025)
+
+plot_total_waterConsumption <- ggplot(df_global, aes(x = year, y = log(value), color = scenario)) +
+  geom_line(size = 1) +
+  geom_point() +
+  labs(x = "Year", y = "Value", color = "Scenario", 
+       title = "Water consumption (km^3)") +
+  theme_minimal() +
+  theme(legend.position = c(0.7, 0.2))
+
+##############energy-for-water TFE############## 
+
+df_query <- getQuery(prj1, "energy-for-water TFE" )
+df_global <- to_global_custom(df_query, group_cols = c("scenario", "year"), func = sum)
+df_com_energy_for_water <- common_table(df_global)
+df_global$scenario <- gsub("Reference", "BaseYear2021", df_global$scenario)
+df_global <- df_global %>% filter(year <= 2025)
+
+plot_energy_for_water <- ggplot(df_global, aes(x = year, y = value, color = scenario)) +
+  geom_line(size = 1) +
+  geom_point() +
+  labs(x = "Year", y = "Energy (EJ)", color = "Scenario", 
+       title = "Energy for Water") +
+  theme_minimal() +
+  theme(legend.position = c(0.7, 0.2))
+
+
+
+##############demand balances by meat and dairy commodity############## 
+df_query <- getQuery(prj1, "demand balances by meat and dairy commodity" )
+df_query <- df_query %>%
+  filter(year >= 2000)
+df_global <- to_global_custom(df_query, group_cols = c("scenario", "year"), func = sum)
+df_com_meat_prod <- common_table(df_global)
+df_global$scenario <- gsub("Reference", "BaseYear2021", df_global$scenario)
+df_global <- df_global %>% filter(year <= 2025)
+
+plot_meat_prod <- ggplot(df_global, aes(x = year, y = log(value), color = scenario)) +
+  geom_line(size = 1) +
+  geom_point() +
+  labs(x = "Year", y = "Meat (Mt)", color = "Scenario", 
+       title = "Meat Consumption") +
+  theme_minimal() +
+  theme(legend.position = c(0.7, 0.7))
+
+
+############## PDF globals ############## 
+library(gridExtra)
+library(grid)
+
+dataFrames <- c()
+plots <- c()
+for (i in ls()){
+  if (grepl('df_com_', i)){
+    dataFrames <- c(dataFrames,i)
+    cat(i,nrow(get(i)), ncol(get(i)),'\n')
+  }
+  if (grepl('plot_', i)){
+    plots <- c(plots,i)
+  }
+}
+
+
+library(stringr)
+
+df_keys   <- str_remove(dataFrames, "^df_com_")
+plot_keys <- str_remove(plots, "^plot_")
+plot_keys <- str_remove(plot_keys, "^total_")
+
+pairs <- merge(
+  data.frame(df = dataFrames, key = df_keys),
+  data.frame(plot = plots, key = plot_keys),
+  by = "key"
+)
+
+pdf("plots_y_tablas.pdf", width = 10, height = 8)
+
+
+for(i in seq_len(nrow(pairs))) {
+  
+  df_name   <- pairs$df[i]
+  plot_name <- pairs$plot[i]
+  df  <- get(df_name)
+  plt <- get(plot_name)
+  
+  grid.newpage()
+  
+  print(plt, vp = viewport(layout.pos.row = 1, layout.pos.col = 1))
+  grid.newpage()
+  grid.table(df, vp = viewport(layout.pos.row = 2, layout.pos.col = 1))
+}
+
+dev.off()

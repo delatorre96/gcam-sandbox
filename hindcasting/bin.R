@@ -61,9 +61,9 @@ close(con)
 
 
 ######################## Buscar variable:
-variable <- 'aglu.MODEL_PRICE_YEARS'
+variable <- 'install.packages'
 
-carpeta_scripts <- "C:/Users/ignacio.delatorre/Documents/GCAM/gcam-core/input/gcamdata/R"
+carpeta_scripts <- "C:/GCAM/Nacho/gcam-europe/input/gcamdata/R"
 
 # Lista
 archivos <- list.files(path = carpeta_scripts, pattern = "\\.R$", recursive = TRUE, full.names = TRUE)

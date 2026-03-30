@@ -305,8 +305,124 @@ get_allData <- function(gcam_path, do_driver = FALSE, save_input_data = FALSE, p
   return(csvs_to_xml)
 }
 
+# 
+# analyze_year_columns <- function(csvs_to_xml) {
+#   
+#   results_list <- list()
+#   idx <- 1
+#   
+#   for (chunk_name in names(csvs_to_xml)) {
+#     
+#     chunk <- csvs_to_xml[[chunk_name]]
+#     
+#     for (df_name in names(chunk)) {
+#       
+#       df <- chunk[[df_name]]
+#       col_names <- names(df)
+#       
+#       # columna exacta "year"
+#       has_year <- "year" %in% col_names
+#       
+#       if (has_year) {
+#         year_vals <- df[["year"]]
+#         min_year <- suppressWarnings(min(year_vals, na.rm = TRUE))
+#         max_year <- suppressWarnings(max(year_vals, na.rm = TRUE))
+#         
+#         if (is.infinite(min_year)) min_year <- NA
+#         if (is.infinite(max_year)) max_year <- NA
+#       } else {
+#         min_year <- NA
+#         max_year <- NA
+#       }
+#       
+#       # columnas que contienen "year" pero no exactamente "year"
+#       contains_year_cols <- col_names[grepl("year", col_names, ignore.case = TRUE) & col_names != "year"]
+#       has_contains_year <- length(contains_year_cols) > 0
+#       
+#       if (has_contains_year) {
+#         names_col_contains_year <- paste(contains_year_cols, collapse = ", ")
+#         
+#         # para simplificar asumimos que hay una sola columna principal, si hay más, tomamos el primer conjunto
+#         first_col <- contains_year_cols[1]
+#         year_vals_contains <- df[[first_col]]
+#         min_contains_year <- suppressWarnings(min(year_vals_contains, na.rm = TRUE))
+#         max_contains_year <- suppressWarnings(max(year_vals_contains, na.rm = TRUE))
+#         
+#         if (is.infinite(min_contains_year)) min_contains_year <- NA
+#         if (is.infinite(max_contains_year)) max_contains_year <- NA
+#         
+#       } else {
+#         names_col_contains_year <- NA
+#         min_contains_year <- NA
+#         max_contains_year <- NA
+#       }
+#       
+#       # guardar resultado
+#       results_list[[idx]] <- data.frame(
+#         chunk = chunk_name,
+#         dataframe = df_name,
+#         col_year = has_year,
+#         min_year = min_year,
+#         max_year = max_year,
+#         contains_year = has_contains_year,
+#         names_col_contains_year = names_col_contains_year,
+#         min_contains_year = min_contains_year,
+#         max_contains_year = max_contains_year,
+#         stringsAsFactors = FALSE
+#       )
+#       
+#       idx <- idx + 1
+#     }
+#   }
+#   
+#   do.call(rbind, results_list)
+# }
 
-analyze_year_columns <- function(csvs_to_xml) {
+analyze_exact_year_columns <- function(csvs_to_xml) {
+  
+  results_list <- list()
+  idx <- 1
+  
+  for (chunk_name in names(csvs_to_xml)) {
+    
+    chunk <- csvs_to_xml[[chunk_name]]
+    
+    for (df_name in names(chunk)) {
+      
+      df <- chunk[[df_name]]
+      
+      # solo si existe la columna exacta "year"
+      if ("year" %in% names(df)) {
+        year_vals <- df[["year"]]
+        
+        min_y <- suppressWarnings(min(year_vals, na.rm = TRUE))
+        max_y <- suppressWarnings(max(year_vals, na.rm = TRUE))
+        
+        if (is.infinite(min_y)) min_y <- NA
+        if (is.infinite(max_y)) max_y <- NA
+        
+        all_years <- paste(sort(unique(year_vals)), collapse = ", ")
+        
+        results_list[[idx]] <- data.frame(
+          chunk = chunk_name,
+          dataframe = df_name,
+          min_year = min_y,
+          max_year = max_y,
+          all_years = all_years,
+          stringsAsFactors = FALSE
+        )
+        
+        idx <- idx + 1
+      }
+    }
+  }
+  
+  do.call(rbind, results_list)
+}
+
+
+
+analyze_year_columns_contains <- function(csvs_to_xml) {
   
   results_list <- list()
   idx <- 1
@@ -320,58 +436,34 @@ analyze_year_columns <- function(csvs_to_xml) {
       df <- chunk[[df_name]]
       col_names <- names(df)
       
-      # columna exacta "year"
-      has_year <- "year" %in% col_names
+      # columnas que contienen "year"
+      year_cols <- col_names[grepl("year", col_names, ignore.case = TRUE)]
       
-      if (has_year) {
-        year_vals <- df[["year"]]
-        min_year <- suppressWarnings(min(year_vals, na.rm = TRUE))
-        max_year <- suppressWarnings(max(year_vals, na.rm = TRUE))
-        
-        if (is.infinite(min_year)) min_year <- NA
-        if (is.infinite(max_year)) max_year <- NA
-      } else {
-        min_year <- NA
-        max_year <- NA
+      # solo procesar si hay alguna
+      if (length(year_cols) > 0) {
+        for (col in year_cols) {
+          year_vals <- df[[col]]
+          min_y <- suppressWarnings(min(year_vals, na.rm = TRUE))
+          max_y <- suppressWarnings(max(year_vals, na.rm = TRUE))
+          
+          if (is.infinite(min_y)) min_y <- NA
+          if (is.infinite(max_y)) max_y <- NA
+          
+          all_years <- paste(sort(unique(year_vals)), collapse = ", ")
+          
+          results_list[[idx]] <- data.frame(
+            chunk = chunk_name,
+            dataframe = df_name,
+            name_col_year = col,
+            min_year = min_y,
+            max_year = max_y,
+            all_years = all_years,
+            stringsAsFactors = FALSE
+          )
+          
+          idx <- idx + 1
+        }
       }
-      
-      # columnas que contienen "year" pero no exactamente "year"
-      contains_year_cols <- col_names[grepl("year", col_names, ignore.case = TRUE) & col_names != "year"]
-      has_contains_year <- length(contains_year_cols) > 0
-      
-      if (has_contains_year) {
-        names_col_contains_year <- paste(contains_year_cols, collapse = ", ")
-        
-        # para simplificar asumimos que hay una sola columna principal, si hay más, tomamos el primer conjunto
-        first_col <- contains_year_cols[1]
-        year_vals_contains <- df[[first_col]]
-        min_contains_year <- suppressWarnings(min(year_vals_contains, na.rm = TRUE))
-        max_contains_year <- suppressWarnings(max(year_vals_contains, na.rm = TRUE))
-        
-        if (is.infinite(min_contains_year)) min_contains_year <- NA
-        if (is.infinite(max_contains_year)) max_contains_year <- NA
-        
-      } else {
-        names_col_contains_year <- NA
-        min_contains_year <- NA
-        max_contains_year <- NA
-      }
-      
-      # guardar resultado
-      results_list[[idx]] <- data.frame(
-        chunk = chunk_name,
-        dataframe = df_name,
-        col_year = has_year,
-        min_year = min_year,
-        max_year = max_year,
-        contains_year = has_contains_year,
-        names_col_contains_year = names_col_contains_year,
-        min_contains_year = min_contains_year,
-        max_contains_year = max_contains_year,
-        stringsAsFactors = FALSE
-      )
-      
-      idx <- idx + 1
     }
   }
   

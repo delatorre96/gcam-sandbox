@@ -58,11 +58,11 @@ run_iteration <- function(i, original_csvs) {
   
   ###############Change csv's###############
   
-  increase_value <- runif(1,-1,2)
+  increase_value <- runif(1,-1,1)
   for (file in files_tochangeCosts){
     increase_csCosts(file,exact_name = 'BEV', approx_name = 'Capital costs', increase_value = increase_value)
   }
-  increase_value <- runif(1,-1,2)
+  increase_value <- runif(1,-1,1)
   for (file in files_tochangeCosts){
     increase_csCosts(file,exact_name = 'BEV_2', approx_name = 'Capital costs', increase_value = increase_value)
   }

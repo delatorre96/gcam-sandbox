@@ -1,0 +1,377 @@
+
+
+PS C:\GCAM\Nacho\gcam-sandbox\cocheElectrico\autom\energy_structure> & "C:\Program Files\R\R-4.5.2\bin\Rscript.exe" "C:\GCAM\Nacho\gcam-sandbox\cocheElectrico\autom\energy_structure\workflow.R"
+Archivo generado: transport_final_energy_by_tech_and_vintage
+Archivo generado: transport_service_output_by_tech
+Archivo generado: costs_of_transport_techs
+Archivo generado: transport_tech_non_energy_cost
+Archivo generado: transport_tech_share_weights
+Archivo generado: fuel_prices_to_transport
+Archivo generado: elec_gen_by_gen_tech
+Archivo generado: elec_prices_by_sector
+Archivo generado: elec_gen_costs_by_tech
+Archivo generado: Capital_investment_demands_by_tech
+Archivo generado: Capital_investment_demands_by_resource
+Archivo generado: iron_and_steel_production_by_region
+Archivo generado: iron_and_steel_prices
+Archivo generado: aluminum_production_by_region
+Archivo generado: aluminum_prices
+Archivo generado: chemical_production_by_region
+Archivo generado: chemical_prices
+Archivo generado: refined_liquids_production_by_region
+Archivo generado: refined_liquids_prices_by_sector
+Archivo generado: National_Account
+Archivo generado: input_output_coefficients_by_tech
+Archivo generado: outputs_by_sector
+Archivo generado: profit_rate
+[1] "C:/GCAM/Nacho/gcam_8.2"
+[1] "C:/GCAM/Nacho/gcam_8.2/exe/configuration.xml"
+[1] "C:/GCAM/Nacho/gcam_8.2/exe/run-gcam.bat"
+[1] "C:/GCAM/Nacho/gcam_8.2/input/gcamdata"
+[1] "C:/GCAM/Nacho/gcam_8.2/input/gcamdata/R"
+[1] "C:/GCAM/Nacho/gcam_8.2/input/gcamdata/inst/extdata"
+[1] "C:/GCAM/Nacho/gcam_8.2/exe/batch_queries"
+ℹ Loading gcamdata
+Found energy/OTAQ_trn_data_EMF37.csv
+Found energy/UCD_trn_data_CORE.csv
+Found energy/A54.globaltranTech_shrwt_revised.csv
+Archivo xmldb_batch generado en: C:/GCAM/Nacho/gcam_8.2/exe/batch_queries/xmldb_batch.xml
+[1] "########################################## iteration 1 ##########################################"
+Found energy/OTAQ_trn_data_EMF37.csv
+Found energy/UCD_trn_data_CORE.csv
+Found energy/OTAQ_trn_data_EMF37.csv
+Found energy/UCD_trn_data_CORE.csv
+Found energy/A54.globaltranTech_shrwt_revised.csv
+Found energy/A54.globaltranTech_shrwt_revised.csv
+GCAM Data System v8.2
+Found 439 chunks
+Found 4579 chunk data requirements
+Found 2510 chunk data products
+1573 chunk data input(s) not accounted for
+▶ target energy.A54.globaltranTech_shrwt_revised
+▶ target energy.UCD_trn_data_CORE
+▶ target energy.OTAQ_trn_data_EMF37
+▶ target module_energy_L154.transportation_UCD
+▶ target L154.in_EJ_R_trn_m_sz_tech_F_Yh
+▶ target L154.cost_usdvkm_R_trn_m_sz_tech_F_Y
+▶ target L154.loadfactor_R_trn_m_sz_tech_F_Y
+▶ target L154.capcoef_usdvkm_R_trn_m_sz_tech_F_Y
+▶ target L154.out_mpkm_R_trn_nonmotor_Yh
+▶ target L154.speed_kmhr_R_trn_m_sz_tech_F_Y
+▶ target L154.intensity_MJvkm_R_trn_m_sz_tech_F_Y
+▶ target L154.IEA_histfut_data_times_UCD_shares
+▶ target UCD_trn_data
+▶ target L154.in_EJ_ctry_trn_m_sz_tech_F
+▶ target module_energy_L254.transportation_UCD
+▶ target L254.StubTranTechLoadFactor
+▶ target L254.GlobalTranTechSCurve
+▶ target L254.FinalEnergyKeyword_trn
+▶ target L254.StubTech_passthru
+▶ target L254.PriceElasticity_trn
+▶ target L254.tranSubsectorSpeed_passthru
+▶ target L254.tranSubsectorShrwtFllt
+▶ target L254.tranSubsectorSpeed
+▶ target L254.tranSubsectorSpeed_noVOTT
+▶ target L254.tranSubsectorFuelPref
+▶ target L254.StubTranTech
+▶ target L254.IncomeElasticity_trn
+▶ target L254.PerCapitaBased_trn
+▶ target L254.tranSubsectorInterp
+▶ target L254.StubTranTechCoef
+▶ target L254.tranSubsectorLogit
+▶ target L254.Supplysector_trn
+▶ target L254.StubTech_nonmotor
+▶ target L254.StubTranTechCost
+▶ target L254.tranSubsectorVOTT
+▶ target L254.tranSubsectorSpeed_nonmotor
+▶ target L254.BaseService_trn
+▶ target L254.StubTechCalInput_passthru
+▶ target L254.GlobalTranTechInterp
+▶ target L254.GlobalTechShrwt_nonmotor
+▶ target L254.GlobalTechShrwt_passthru
+▶ target L254.StubTranTechCalInput
+▶ target L254.StubTechProd_nonmotor
+▶ target L254.GlobalRenewTech_nonmotor
+▶ target L254.GlobalTechCoef_passthru
+▶ target L254.StubTechTrackCapital
+▶ target L254.GlobalTranTechShrwt
+▶ target L254.GlobalTranTechProfitShutdown
+▶ target L254.tranSubsectorInterpTo
+▶ target L254.tranSubsectorShrwt
+▶ target module_gcamusa_L254.transportation
+▶ target module_energy_transportation_UCD_CORE_xml
+▶ target L254.FinalEnergyKeyword_trn_USA
+▶ target L254.tranSubsectorInterp_USA
+▶ target L254.StubTranTech_nonmotor_USA
+▶ target L254.PerCapitaBased_trn_USA
+▶ target L254.StubTranTechLoadFactor_USA
+▶ target L254.BaseService_trn_USA
+▶ target L254.DeleteSupplysector_USAtrn
+▶ target L254.StubTranTechProd_nonmotor_USA
+▶ target L254.DeleteFinalDemand_USAtrn
+▶ target L254.StubTranTech_passthru_USA
+▶ target L254.StubTranTechCost_USA
+▶ target L254.tranSubsectorSpeed_nonmotor_USA
+▶ target L254.IncomeElasticity_trn_USA
+▶ target L254.tranSubsectorVOTT_USA
+▶ target L254.tranSubsectorSpeed_noVOTT_USA
+▶ target L254.tranSubsectorSpeed_passthru_USA
+▶ target L254.StubTranTechCoef_USA
+▶ target L254.StubTranTechCalInput_passthru_USA
+▶ target L254.tranSubsectorShrwtFllt_USA
+▶ target L254.tranSubsectorLogit_USA
+▶ target L254.StubTranTech_USA
+▶ target L254.tranSubsectorSpeed_USA
+▶ target L254.Supplysector_trn_USA
+▶ target L254.tranSubsectorFuelPref_USA
+▶ target L254.StubTranTechCalInput_USA
+▶ target L254.PriceElasticity_trn_USA
+▶ target L254.StubTranTechOutput_USA
+▶ target transportation_UCD_SSP1.xml
+▶ target transportation_UCD_SSP3.xml
+▶ target transportation_UCD_SSP5.xml
+▶ target transportation_UCD_CORE.xml
+▶ target module_gcamusa_transportation_xml
+▶ target xml.transportation_UCD_SSP1.xml
+▶ target xml.transportation_UCD_SSP3.xml
+▶ target xml.transportation_UCD_SSP5.xml
+▶ target xml.transportation_UCD_CORE.xml
+▶ target transportation_USA_CORE.xml
+▶ target xml.transportation_USA_CORE.xml
+All done.
+This computer software was prepared by Battelle Memorial Institute,
+hereinafter the Contractor, under Contract No. DE-AC05-76RL0 1830 with
+the Department of Energy (DOE). NEITHER THE GOVERNMENT NOR THE
+CONTRACTOR MAKES ANY WARRANTY, EXPRESS OR IMPLIED, OR ASSUMES ANY
+LIABILITY FOR THE USE OF THIS SOFTWARE. This notice including this
+sentence must appear on any copies of this computer software.
+
+User agrees that the Software will not be shipped, transferred or
+exported into any country or used in any manner prohibited by the United
+States Export Administration Act or any other applicable export laws,
+restrictions or regulations (collectively the 'Export Laws'). Export of
+the Software may require some form of license or other authority from
+the U.S. Government, and failure to obtain such export control license
+may result in criminal liability under U.S. laws. In addition, if the
+Software is identified as export controlled items under the Export Laws,
+User represents and warrants that User is not a citizen, or otherwise
+located within, an embargoed nation (including without limitation Iran,
+Syria, Sudan, Cuba, and North Korea) and that User is not otherwise
+prohibited under the Export Laws from receiving the Software.
+
+Copyright 2011 Battelle Memorial Institute.  All Rights Reserved.
+Distributed as open-source under the terms of the Educational Community
+License version 2.0 (ECL 2.0). http://www.opensource.org/licenses/ecl2.php
+
+For further details, see: http://www.globalchange.umd.edu/models/gcam/
+
+Running GCAM model code base version 8.2 revision gcam-v8.2
+
+Configuration file:  configuration.xml
+Parsing input files...
+[0.009s][warning][cds] Archived non-system classes are disabled because the java.system.class.loader property is specified (value = "WildcardExpandingClassLoader"). To use archived non-system classes, this property must not be set
+Parsing ../input/gcamdata/xml/hector.xml scenario component.
+Parsing ../input/gcamdata/xml/socioeconomics_CORE.xml scenario component.
+Parsing ../input/gcamdata/xml/resources.xml scenario component.
+Parsing ../input/gcamdata/xml/en_supply.xml scenario component.
+Parsing ../input/gcamdata/xml/en_transformation.xml scenario component.
+Parsing ../input/gcamdata/xml/electricity_water.xml scenario component.
+Parsing ../input/gcamdata/xml/heat.xml scenario component.
+Parsing ../input/gcamdata/xml/hydrogen.xml scenario component.
+Parsing ../input/gcamdata/xml/en_distribution.xml scenario component.
+Parsing ../input/gcamdata/xml/other_industry.xml scenario component.
+Parsing ../input/gcamdata/xml/other_industry_incelas_ssp2.xml scenario component.
+Parsing ../input/gcamdata/xml/iron_steel.xml scenario component.
+Parsing ../input/gcamdata/xml/iron_steel_incelas_ssp2.xml scenario component.
+Parsing ../input/gcamdata/xml/iron_steel_trade.xml scenario component.
+Parsing ../input/gcamdata/xml/Off_road.xml scenario component.
+Parsing ../input/gcamdata/xml/Off_road_incelas_ssp2.xml scenario component.
+Parsing ../input/gcamdata/xml/chemical.xml scenario component.
+Parsing ../input/gcamdata/xml/chemical_incelas_ssp2.xml scenario component.
+Parsing ../input/gcamdata/xml/aluminum.xml scenario component.
+Parsing ../input/gcamdata/xml/aluminum_incelas_ssp2.xml scenario component.
+Parsing ../input/gcamdata/xml/paper.xml scenario component.
+Parsing ../input/gcamdata/xml/paper_incelas_ssp2.xml scenario component.
+Parsing ../input/gcamdata/xml/food_processing.xml scenario component.
+Parsing ../input/gcamdata/xml/cement.xml scenario component.
+Parsing ../input/gcamdata/xml/cement_incelas_ssp2.xml scenario component.
+Parsing ../input/gcamdata/xml/en_Fert.xml scenario component.
+Parsing ../input/gcamdata/xml/HDDCDD_constdd_no_GCM.xml scenario component.
+Parsing ../input/gcamdata/xml/building_det.xml scenario component.
+Parsing ../input/gcamdata/xml/transportation_UCD_CORE.xml scenario component.
+Parsing ../input/gcamdata/xml/Ccoef.xml scenario component.
+Parsing ../input/gcamdata/xml/Cstorage.xml scenario component.
+Parsing ../input/gcamdata/xml/onshore_wind.xml scenario component.
+Parsing ../input/gcamdata/xml/ag_For_Past_bio_base_IRR_MGMT.xml scenario component.
+Parsing ../input/gcamdata/xml/ag_cost_IRR_MGMT.xml scenario component.
+Parsing ../input/gcamdata/xml/ag_prodchange_ref_IRR_MGMT.xml scenario component.
+Parsing ../input/gcamdata/xml/resbio_input_IRR_MGMT.xml scenario component.
+Parsing ../input/gcamdata/xml/an_input.xml scenario component.
+Parsing ../input/gcamdata/xml/ag_Fert_IRR_MGMT.xml scenario component.
+Parsing ../input/gcamdata/xml/land_input_1.xml scenario component.
+Parsing ../input/gcamdata/xml/land_input_2.xml scenario component.
+Parsing ../input/gcamdata/xml/land_input_3_IRR.xml scenario component.
+Parsing ../input/gcamdata/xml/land_input_4_IRR_MGMT.xml scenario component.
+Parsing ../input/gcamdata/xml/land_input_5_IRR_MGMT.xml scenario component.
+Parsing ../input/gcamdata/xml/protected_land_input_2.xml scenario component.
+Parsing ../input/gcamdata/xml/protected_land_input_3.xml scenario component.
+Parsing ../input/gcamdata/xml/ag_an_demand_input.xml scenario component.
+Parsing ../input/gcamdata/xml/paper_delete_ag_demand.xml scenario component.
+Parsing ../input/gcamdata/xml/bio_trade.xml scenario component.
+Parsing ../input/gcamdata/xml/ag_trade.xml scenario component.
+Parsing ../input/gcamdata/xml/ag_storage.xml scenario component.
+Parsing ../input/gcamdata/xml/unlimited_water_supply.xml scenario component.
+Parsing ../input/gcamdata/xml/water_supply_constrained.xml scenario component.
+Parsing ../input/gcamdata/xml/desalination.xml scenario component.
+Parsing ../input/gcamdata/xml/water_td.xml scenario component.
+Parsing ../input/gcamdata/xml/EFW_input_coefs.xml scenario component.
+Parsing ../input/gcamdata/xml/EFW_irrigation.xml scenario component.
+Parsing ../input/gcamdata/xml/EFW_manufacturing.xml scenario component.
+Parsing ../input/gcamdata/xml/EFW_municipal.xml scenario component.
+Parsing ../input/gcamdata/xml/ag_water_input_IRR_MGMT.xml scenario component.
+Parsing ../input/gcamdata/xml/electricity_water_coefs.xml scenario component.
+Parsing ../input/gcamdata/xml/water_demand_industry.xml scenario component.
+Parsing ../input/gcamdata/xml/water_demand_livestock.xml scenario component.
+Parsing ../input/gcamdata/xml/water_demand_municipal.xml scenario component.
+Parsing ../input/gcamdata/xml/water_demand_primary.xml scenario component.
+Parsing ../input/gcamdata/xml/ind_urb_processing_sectors.xml scenario component.
+Parsing ../input/gcamdata/xml/all_energy_emissions.xml scenario component.
+Parsing ../input/gcamdata/xml/all_fgas_emissions.xml scenario component.
+Parsing ../input/gcamdata/xml/all_unmgd_emissions.xml scenario component.
+Parsing ../input/gcamdata/xml/all_aglu_emissions_IRR_MGMT.xml scenario component.
+Parsing ../input/gcamdata/xml/all_protected_unmgd_emissions.xml scenario component.
+Parsing ../input/gcamdata/xml/emission_factor_controls.xml scenario component.
+Parsing ../input/gcamdata/xml/ssp2_emissions_factors_tradBio.xml scenario component.
+Parsing ../input/gcamdata/xml/all_energy_emissions_MAC.xml scenario component.
+Parsing ../input/gcamdata/xml/all_fgas_emissions_MAC.xml scenario component.
+Parsing ../input/gcamdata/xml/all_aglu_emissions_IRR_MGMT_MAC.xml scenario component.
+Parsing ../input/gcamdata/xml/ind_urb_processing_sectors_MAC.xml scenario component.
+Parsing ../input/gcamdata/xml/socioeconomics_macro.xml scenario component.
+Parsing ../input/gcamdata/xml/liquids_limits.xml scenario component.
+Parsing ../input/gcamdata/xml/water_elec_liquids_limits.xml scenario component.
+Parsing ../input/gcamdata/xml/bio_externality.xml scenario component.
+Parsing ../input/gcamdata/xml/gas_trade.xml scenario component.
+Parsing ../input/gcamdata/xml/prune_empty_ag.xml scenario component.
+Parsing ../input/solution/cal_broyden_config.xml scenario component.
+XML parsing complete.
+Starting new scenario: elecCar_1
+Fri Feb 27 09:11:24 2026:WARNING:Hector::Logger::printLogHeader: hector version 3.2.0
+Fri Feb 27 09:11:24 2026:WARNING:Hector::Logger::printLogHeader: hector version 3.2.0
+Starting a model run. Running all periods.
+Model run beginning.
+Period 0: 1975
+Model solved with last period's prices.
+
+Period 1: 1990
+Model solved normally. Iterations period 1: 300. Total iterations: 301
+
+Period 2: 2005
+Model solved normally. Iterations period 2: 172. Total iterations: 472
+
+Period 3: 2010
+Model solved normally. Iterations period 3: 218. Total iterations: 690
+
+Period 4: 2015
+Model solved normally. Iterations period 4: 186. Total iterations: 876
+
+Period 5: 2021
+Model solved normally. Iterations period 5: 155. Total iterations: 1030
+
+Period 6: 2025
+Model solved normally. Iterations period 6: 1118. Total iterations: 2147
+
+Period 7: 2030
+Model solved normally. Iterations period 7: 1587. Total iterations: 3734
+
+Period 8: 2035
+Model solved normally. Iterations period 8: 449. Total iterations: 4182
+
+Period 9: 2040
+Model solved normally. Iterations period 9: 372. Total iterations: 4554
+
+Period 10: 2045
+Model solved normally. Iterations period 10: 403. Total iterations: 4957
+
+Period 11: 2050
+Model solved normally. Iterations period 11: 602. Total iterations: 5558
+
+Period 12: 2055
+Model solved normally. Iterations period 12: 205. Total iterations: 5763
+
+Period 13: 2060
+Model solved normally. Iterations period 13: 389. Total iterations: 6152
+
+Period 14: 2065
+Model solved normally. Iterations period 14: 206. Total iterations: 6357
+
+Period 15: 2070
+Model solved normally. Iterations period 15: 196. Total iterations: 6552
+
+Period 16: 2075
+Model solved normally. Iterations period 16: 199. Total iterations: 6750
+
+Period 17: 2080
+Model solved normally. Iterations period 17: 488. Total iterations: 7238
+
+Period 18: 2085
+Model solved normally. Iterations period 18: 568. Total iterations: 7805
+
+Period 19: 2090
+Model solved normally. Iterations period 19: 218. Total iterations: 8023
+
+Period 20: 2095
+Model solved normally. Iterations period 20: 193. Total iterations: 8216
+
+Period 21: 2100
+Model solved normally. Iterations period 21: 182. Total iterations: 8397
+
+All model periods solved correctly.
+Fri Feb 27 09:36:19 2026:WARNING:Hector::Logger::printLogHeader: hector version 3.2.0
+Model run completed.
+Printing output
+Starting output to XML Database.
+Opening in-memory database
+Model run completed.
+Model exiting successfully.
+Running batch file: batch_queries/xmldb_batch.xml
+InterfaceMain: Directing stdout to logs/batch_queries.log
+java.util.concurrent.ExecutionException: java.lang.Exception: The query returned no results.
+        at java.base/java.util.concurrent.FutureTask.report(FutureTask.java:122)
+        at java.base/java.util.concurrent.FutureTask.get(FutureTask.java:191)
+        at ModelInterface.ModelGUI2.BatchWindow$FutureQueryTask.get(BatchWindow.java:169)
+        at ModelInterface.ModelGUI2.BatchWindow.doCsvOutput(BatchWindow.java:594)
+        at ModelInterface.ModelGUI2.BatchWindow.access$100(BatchWindow.java:105)
+        at ModelInterface.ModelGUI2.BatchWindow$3.run(BatchWindow.java:383)
+Caused by: java.lang.Exception: The query returned no results.
+        at ModelInterface.ModelGUI2.tables.ComboTableModel.buildTable(ComboTableModel.java:914)
+        at ModelInterface.ModelGUI2.tables.ComboTableModel.<init>(ComboTableModel.java:806)
+        at ModelInterface.ModelGUI2.BatchWindow$FutureQueryTask.call(BatchWindow.java:195)
+        at ModelInterface.ModelGUI2.BatchWindow$FutureQueryTask.call(BatchWindow.java:135)
+        at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:317)
+        at ModelInterface.ModelGUI2.BatchWindow$FutureQueryTask.run(BatchWindow.java:181)
+        at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144)
+        at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642)
+        at java.base/java.lang.Thread.run(Thread.java:1583)
+
+GCAM terminó con código de salida 0
+Error in read.table(file = file, header = header, sep = sep, quote = quote,  :
+  no lines available in input
+Calls: run_iteration -> read.csv -> read.table
+In addition: There were 16 warnings (use warnings() to see them)
+CSV restored after iteration 1
+Execution halted
+PS C:\GCAM\Nacho\gcam-sandbox\cocheElectrico\autom\energy_structure>
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -8,7 +8,7 @@ set_gcam_paths <- function(gcam_path) {
   dir_gcamdata <<- paste0(gcam_path,'/input/gcamdata')
   dir_chunks <<- paste0(dir_gcamdata,'/R')
   dir_csvs_iniciales <<- paste0(dir_gcamdata,'/inst/extdata')
-  batch_queries_file <<- paste0(dir_gcam,'/exe/batch_queries/xmldb_batch.xml')
+  batch_queries <<- paste0(dir_gcam,'/exe/batch_queries')
   
   print(dir_gcam)
   print(config_file)
@@ -16,7 +16,7 @@ set_gcam_paths <- function(gcam_path) {
   print(dir_gcamdata)
   print(dir_chunks)
   print(dir_csvs_iniciales)
-  print(batch_queries_file)
+  print(batch_queries)
 }
 
 modify_config_file <- function(new_config_name, config_path){
@@ -33,6 +33,14 @@ modify_config_file <- function(new_config_name, config_path){
   # Guardar el archivo modificado (si quieres)
   write_xml(config_doc, config_path)
   
+}
+
+write_gcam_csv <- function(header_lines, path,df){
+  writeLines(header_lines, path)
+  suppressWarnings(
+    write.table(df, path, sep = ",", append = TRUE, 
+                row.names = FALSE, quote = FALSE, na = "")
+  )
 }
 
 

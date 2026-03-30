@@ -38,3 +38,7 @@ results_only_years <- results[results$col_year == TRUE & results$contains_year =
 unique_col_years <- results_only_years  %>% select(min_year, max_year) %>% distinct()
 unique_contains_years <- results_only_years  %>% select(min_contains_year, max_contains_year) %>% distinct()
 
+write.csv(results, 'final_df_years_2021.csv', row.names = FALSE)
+write.csv(unique_col_years, 'unique_col_years_2021.csv', row.names = FALSE)
+write.csv(unique_contains_years, 'unique_contains_years_2021.csv', row.names = FALSE)
+

@@ -23,7 +23,7 @@ files_xml <- files[
 ]
 
 setwd(thisLoc)
-csvs_to_xml <- get_allData(gcam_path = gcam_path, do_driver = FALSE, save_input_data = TRUE, path2save = path2save, files_xml = files_xml)
+csvs_to_xml <- get_allData(gcam_path = gcam_path, do_driver = TRUE, save_input_data = TRUE, path2save = path2save, files_xml = files_xml,csvs_to_xml_name = 'csvs_to_xml_2010')
 
 ##### Analyze inputs #####
 setwd(thisLoc)

@@ -277,7 +277,7 @@ comparing_outputs <- function(gcam_paths, chunks_inputs, path2save,
 }
 
 
-get_allData <- function(gcam_path, do_driver = FALSE, save_input_data = FALSE, path2save, files_xml){
+get_allData <- function(gcam_path, do_driver = FALSE, save_input_data = FALSE, path2save, files_xml,csvs_to_xml_name = 'csvs_to_xml'){
   old_wd <- getwd()
   on.exit(setwd(old_wd), add = TRUE)
   setwd(gcam_path)
@@ -300,7 +300,7 @@ get_allData <- function(gcam_path, do_driver = FALSE, save_input_data = FALSE, p
     }
   }
   if (save_input_data){
-    save(csvs_to_xml, file = paste0(path2save,"/csvs_to_xml.RData"))
+    save(csvs_to_xml, file = paste0(path2save,"/",csvs_to_xml_name,".RData"))
   }
   return(csvs_to_xml)
 }

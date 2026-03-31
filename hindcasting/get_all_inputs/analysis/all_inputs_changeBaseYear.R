@@ -31,20 +31,12 @@ if (!('csvs_to_xml' %in% ls())){
   load('csvs_to_xml.RData')
 }
 
-# results <- analyze_year_columns(csvs_to_xml)
-# results_only_years <- results[results$col_year == TRUE & results$contains_year == TRUE,]
-# unique_col_years <- results_only_years  %>% select(min_year, max_year) %>% distinct()
-
 results_exact_years <- analyze_exact_year_columns(csvs_to_xml)
 unique_exact_years <- results_exact_years  %>% select(min_year, max_year, all_years) %>% distinct()
 
 results_contains_years <- analyze_year_columns_contains(csvs_to_xml)
 unique_contains_years <- results_contains_years  %>% select(min_year, max_year, all_years) %>% distinct()
 
-
-
-
-#unique_contains_years <- results_only_years  %>% select(min_contains_year, max_contains_year) %>% distinct()
 
 write.csv(results, 'final_df_years_2021.csv', row.names = FALSE)
 write.csv(unique_col_years, 'unique_col_years_2021.csv', row.names = FALSE)

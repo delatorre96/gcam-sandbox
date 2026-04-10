@@ -5,6 +5,7 @@ csvs_to_xml_2010 <- csvs_to_xml
 rm(csvs_to_xml)
 
 library(dplyr)
+library(purrr)
 
 analyze_columns_with_year <- function(list_2010, list_2021) {
   
@@ -237,10 +238,55 @@ if (nrow(diferentTreatmentsInDF) == 0){
 }
 
 
-
-
-write.csv(mapping_treatment_df, 'mapping_treatment_df', row.names = FALSE)
+######################### analyse whether each non number columns group has a single year (if this is the case, the treatment is always substitution) #########################
+mapping_treatment_df$distinct_years <- map_lgl(seq_len(nrow(mapping_treatment_df)), function(i) {
+  row <- mapping_treatment_df[i, ]
+  chunk_i <- row$chunk
+  df_i <- row$dataframe
+  col_year <- row$name_col_year
   
+  df_2010 <- csvs_to_xml_2010[[chunk_i]][[df_i]]
+  df_2021 <- csvs_to_xml_2021[[chunk_i]][[df_i]]
+  
+  num_cols_2010 <- setdiff(names(df_2010)[sapply(df_2010, is.numeric)], col_year)
+  non_num_cols_2010 <- names(df_2010)[sapply(df_2010, is.character)]
+  
+  num_cols_2021 <- setdiff(names(df_2021)[sapply(df_2021, is.numeric)], col_year)
+  non_num_cols_2021 <- names(df_2021)[sapply(df_2021, is.character)]
+  
+  # chequeamos 2010
+  all_2010 <- df_2010 %>%
+    select(-all_of(num_cols_2010)) %>%
+    group_by(across(all_of(non_num_cols_2010))) %>%
+    summarise(n_years = n_distinct(.data[[col_year]]), .groups = "drop") %>%
+    pull(n_years) %>%
+    all(. == 1)
+  
+  # chequeamos 2021
+  all_2021 <- df_2021 %>%
+    select(-all_of(num_cols_2021)) %>%
+    group_by(across(all_of(non_num_cols_2021))) %>%
+    summarise(n_years = n_distinct(.data[[col_year]]), .groups = "drop") %>%
+    pull(n_years) %>%
+    all(. == 1)
+  
+  # TRUE solo si ambos cumplen
+  all_2010 && all_2021
+})
+
+mapping_treatment_df <- mapping_treatment_df %>% 
+  mutate(treatment = if_else(distinct_years == TRUE & treatment == 'fill_missing_years', 'swap_years',treatment)) 
+
+idx <- mapping_treatment_df$treatment == "swap_years" & mapping_treatment_df$missing_in_2010 == ""
+mapping_treatment_df$missing_in_2010[idx] <- "2025"        
+mapping_treatment_df$missing_in_2021[idx] <- "2015" 
+
+
+write.csv(mapping_treatment_df, 'mapping_treatment_df.csv', row.names = FALSE)
+  
+
+
+
 ######################### analyse distinct df ######################### 
 results_unique <- results %>% 
   # filter(are_equal == FALSE, 

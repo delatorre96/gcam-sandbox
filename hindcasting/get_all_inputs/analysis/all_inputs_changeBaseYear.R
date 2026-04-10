@@ -19,9 +19,9 @@ files <- list.files()
 
 files_xml <- files[
   grepl('xml', files) & 
-    grepl(paste(c('zaglu','zenergy','zemissions','zwater'), collapse = "|"), files)
+    grepl(paste(c('zaglu','zenergy','zemissions','zwater','zsocio','zgcamusa'), collapse = "|"), files) &
+    grepl("\\.R$", files)   
 ]
-
 setwd(thisLoc)
 csvs_to_xml <- get_allData(gcam_path = gcam_path, do_driver = TRUE, save_input_data = TRUE, path2save = path2save, files_xml = files_xml,csvs_to_xml_name = 'csvs_to_xml_2010')
 

@@ -199,17 +199,16 @@ region_map = {
     'SK': 'Slovakia'
 }
 df_otaq_final['UCD_region'] = df_otaq_final['UCD_region'].map(region_map).rename(columns = {'Unit' : 'unit'})
-df_otaq_final = df_otaq_final[['UCD_region', 'UCD_sector', 'mode', 'size.class', 'UCD_technology',
+df_otaq_final = df_otaq_final[
+    ['UCD_region', 'UCD_sector', 'mode', 'size.class', 'UCD_technology',
        'UCD_fuel', 'variable', 'unit' , 2005,             2006,
                    2007,             2008,             2009,             2010,
                    2011,             2012,             2013,             2014,
                    2015,             2016,             2017,             2018,
-                   2019,             2020,             2021,             2022,             2023]]
+                   2019,             2020,             2021,             2022,             2023]
+                   ]
 
-df_otaq_final_ship = df_otaq_final[df_otaq_final['mode'].str.contains('Ship', na=False) & (df_otaq_final['variable'] == 'energy')]#.fillna(0)
-df_otaq_final_ship['Unit'] = 'ktoe'
-df_otaq_final = df_otaq_final.drop(df_otaq_final_ship.reset_index()['index'].to_list())
-df_otaq_final = pd.concat([df_otaq_final, df_otaq_final_ship]).reset_index(drop=True)
+df_otaq_final.loc[df_otaq_final['variable'] == 'energy', 'unit'] = 'ktoe'
 
 df_otaq_final = df_otaq_final[df_otaq_final['variable'].isin(['intensity', 'energy', 'load factor'])]
 

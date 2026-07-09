@@ -2,18 +2,19 @@
 extract_inputs <- function(gcam_path = "C:/GCAM/Nacho/gcam_europe/input/gcamdata", do_driver = FALSE){
   thisLoc <- getwd()
   setwd(gcam_path)
+  devtools::load_all()
+  if (do_driver){
+    driver_drake()
+  }
   setwd('R')
   
   files <- list.files()
   files_xml <- files[
     grepl('xml', files) &
-      grepl(paste(c('zaglu','zenergy','zemissions','zwater','zsocio','zgcamusa'), collapse = "|"), files) &
+      grepl(paste(c('zaglu','zenergy','zemissions','zwater','zsocio','zgcamusa', 'zgcameurope'), collapse = "|"), files) &
       grepl("\\.R$", files)
   ]
-  devtools::load_all()
-  if (do_driver){
-    driver_drake()
-  }
+
   csvs_to_xml <- list()
   for (file in files_xml){
     if (!(file %in% names(csvs_to_xml))){
@@ -21,6 +22,10 @@ extract_inputs <- function(gcam_path = "C:/GCAM/Nacho/gcam_europe/input/gcamdata
       source(file, local = env)
       r_objects <- ls(env)
       module <- r_objects[grep("module", r_objects)]
+      if (length(module) == 0) {
+        message("No module found in ", file, ". Skipping.")
+        next
+      }
       all_data <- load_from_cache(inputs_of(module))
       csvs_to_xml[[file]] <- all_data
     }
@@ -134,4 +139,7 @@ search_in_inputs <- function(search_string,
   do.call(rbind, results)
   
 }
+
+
+
 
